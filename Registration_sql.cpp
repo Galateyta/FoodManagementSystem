@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <cctype>
+
 //#include "utils/Utils.h"
 
 using namespace std;
@@ -25,7 +26,7 @@ string RuserName, RPassword;
 
 int  main()
 {
-	cout<<"\t\t\t ___________________________________ \n";
+    cout<<"\t\t\t ___________________________________ \n";
 	cout<<"\t\t\t ***             WELCOME!        *** \n";
 	cout<<"\t\t\t    ______________________________   \n";
 	cout<<"\t\t\t     Used Oil Management Programm    \n\n";
@@ -89,7 +90,7 @@ void profile(){
 	cout<<"\t\t\t\t --------- Hello!--------- \n\n";
 	cout<<"\t\t\t\t  Here is your Profile \n\n\n"; }
 // ___________________________________________________________ //
-
+/*
 string enterRestName(){
 cout<<"\t\t\t Enter your public food place name: \n";
 cout<<"\t\t\t __ ";
@@ -105,6 +106,7 @@ cin.ignore();
 getline(cin, Address);
 return Address;
 }
+*/
 
 string generateID(){
 
@@ -146,10 +148,10 @@ void  registration()
     cin>>RuserName;
 // ************************ //
 	
-	char server[30] = "sql6.freesqldatabase.com";
-        char username[25] = "sql6642308";
-        char password[25] = "ZL9cx52cPH";
-        char database[25] = "sql6642308";
+	char server[30] = "sql12.freesqldatabase.com";
+        char username[25] = "sql12644207";
+        char password[25] = "rSb45Uhe9S";
+        char database[25] = "sql12644207";
 
     MYSQL* conn = mysql_init(NULL);
 
@@ -219,8 +221,8 @@ void  registration()
 
     cout<<"\n\n\t\t\t Enter your address: "<<endl;
     cout<<"\t\t\t _ ";
-    getline(cin, Address);
     cin.ignore();
+    getline(cin, Address);
     //enterAddress();
     
     cout<<"\n\n\t\t\t Enter your email: "<<endl;
@@ -252,7 +254,7 @@ void  registration()
     string userID=generateID();
     //string userID = generateUniqueID();
 
-    string queryString = "INSERT INTO USER(ID, Username, RestName, Password, Address, Email, MenuID, UserRole) VALUES ('" + userID +  "','" + RuserName + "','" + RestName +"','" + RPassword + "','" + Address + "','" + Email + "','0','" + userrole + "')";
+    string queryString = "INSERT INTO USER(ID, Username, RestName, Password, Address, Email, UserRole) VALUES ('" + userID +  "','" + RuserName + "','" + RestName +"','" + RPassword + "','" + Address + "','" + Email + "','" + userrole + "')";
     string insertQuery = queryString;
     if (mysql_query(connn, insertQuery.c_str())) {
         mysql_close(connn);
@@ -274,10 +276,10 @@ void login() {
 	cout<<"\x1B[2J\x1B[H";
 
 // *************************************** //
-	char server[30] = "sql6.freesqldatabase.com";
-        char username[25] = "sql6642308";
-        char password[25] = "ZL9cx52cPH";
-        char database[25] = "sql6642308";
+	char server[30] = "sql12.freesqldatabase.com";
+        char username[25] = "sql12644207";
+        char password[25] = "rSb45Uhe9S";
+        char database[25] = "sql12644207";
 
     	MYSQL* conn = mysql_init(NULL);
 
