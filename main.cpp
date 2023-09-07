@@ -1,9 +1,10 @@
 #include <iostream>
 
+#include "./Authentication/Authentication.h"
 #include "./Order/Order.h"
 
 int main() {
-    Order order;
-    order.fillOrderData("KFC_ID");
+    Authentication auth;
+    auth.authPage();
     return 0;
 }
