@@ -1,0 +1,6 @@
+1. If you are having issues with compiling program use "-lmysqlclient" flag.
+2. Make sure orders table created during registration with name - "ORDERS".
+3. Make sure having "MENU" table with this columns with the same order - ID(text), DishName(text), OilCount(int), FryingLevel(text).
+4. ID of menu item should be equal to id of current signed user. You can change it in the main.cpp while calling the fillOrderData function.
+
+RESTAURANTS table in sql should look like this in this exact order - ID, Username, Password, RestaurantName, Address, Email, Role, MaxOilCount, CurrentOilCount, Coefficient, Frequency.
