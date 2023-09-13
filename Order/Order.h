@@ -17,9 +17,9 @@ class Order {
           const std::chrono::system_clock::time_point &date,
           const int &oilCount, const int &count,
           const std::string &RestNameOrderID);
-
+    void firstPage();
     void fillOrderData(std::string currentUserID);
-    int takeOrder(Order order);
+    void takeOrder(Order order);
     std::pair<MYSQL_RES *, int> fetchMenu(std::string currentUserID);
     int getDishByID(std::string currentUserID, std::string dishName);
 };

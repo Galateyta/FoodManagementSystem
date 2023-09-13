@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 
+#include "../Profile/Profile.h"
 #include "../utils/Utils.h"
 #include "/usr/include/mysql/mysql.h"
 
@@ -19,18 +20,17 @@ Order::Order(const std::string &dishName,
       count(count),
       orderID(RestNameOrderID) {}
 
-int Order::takeOrder(Order order) {
+void Order::takeOrder(Order order) {
     char server[26] = "sql8.freesqldatabase.com";
-    char username[15] = "sql8644761";
-    char password[15] = "M8c6DWvEMr";
-    char database[15] = "sql8644761";
+    char username[15] = "sql8646145";
+    char password[15] = "z9nFFL1Han";
+    char database[15] = "sql8646145";
 
     MYSQL *conn = mysql_init(NULL);
     if (mysql_real_connect(conn, server, username, password, database, 0, NULL,
                            0) == NULL) {
         printf("Unable to connect with MySQL server\n");
         mysql_close(conn);
-        return 1;
     }
 
     std::string insertQuery =
@@ -44,11 +44,35 @@ int Order::takeOrder(Order order) {
     if (mysql_query(conn, insertQuery.c_str())) {
         std::cout << "Error while trying to insert order" << std::endl;
         mysql_close(conn);
-        return 1;
     }
-    return 0;
+    firstPage();
 }
 
+void Order::firstPage() {
+    int choice;
+    Profile profile;
+    std::cout << "\t * Press 1 to return to Profile screen. " << std::endl;
+    std::cout << "\t * Press 2 to add Order. " << std::endl;
+    std::cout << "\t * Press 3 to EXIT \n\n";
+    std::cout << "\t Enter your choice: ";
+
+    std::cin >> choice;
+    switch (choice) {
+        case 1:
+            profile.showProfilePage();
+            break;
+        case 2:
+            fillOrderData("KFC_ID");
+            break;
+        case 3:
+            std::cout << "\t\t\t Thank you! \n\n";
+            break;
+        default:
+            std::cout << "\033[2J\033[1;1H";
+            std::cout << "\t\t\t Select from the options given above \n";
+            fillOrderData("KFC_ID");  // TODO fix
+    }
+}
 void Order::fillOrderData(std::string currentUserID) {
     std::string dishName;
     std::string count;
@@ -56,11 +80,15 @@ void Order::fillOrderData(std::string currentUserID) {
         std::chrono::system_clock::now();
     std::string orderID = generateUniqueID();
 
-    std::cout << "\t\t\t Enter details for your Order.\n\n";
+    std::cout
+        << "\t\t\t --------- Enter details for your Order. --------- \n\n";
 
     std::cout << "Enter Dish name" << std::endl;
+    std::cout << "_ ";
     std::cin >> dishName;
+
     std::cout << "Enter Dish count" << std::endl;
+    std::cout << "_ ";
     std::cin >> count;
     int oilCount = getDishByID(currentUserID, dishName);
     Order newOrder(dishName, orderDate, oilCount, std::stoi(count), orderID);
@@ -80,9 +108,9 @@ void Order::fillOrderData(std::string currentUserID) {
 
 std::pair<MYSQL_RES *, int> Order::fetchMenu(std::string currentUserID) {
     char server[26] = "sql8.freesqldatabase.com";
-    char username[15] = "sql8644761";
-    char password[15] = "M8c6DWvEMr";
-    char database[15] = "sql8644761";
+    char username[15] = "sql8646145";
+    char password[15] = "z9nFFL1Han";
+    char database[15] = "sql8646145";
 
     MYSQL *conn = mysql_init(NULL);
     // Connecting to database

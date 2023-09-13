@@ -34,3 +34,7 @@ std::string timePointToString(
                   std::localtime(&time));
     return buffer;
 }
+
+void updateCurrentOilCount(std::string oilCount) {
+    // TODO implement this
+}
