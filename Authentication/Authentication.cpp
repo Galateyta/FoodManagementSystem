@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 
+#include "../Profile/Profile.h"
 #include "../utils/Utils.h"
 #include "/usr/include/mysql/mysql.h"
 
@@ -42,10 +43,6 @@ void Authentication::authPage() {
     }
 }
 
-void Authentication::profile() {
-    std::cout << "\t\t\t\t --------- Hello!--------- \n\n";
-    std::cout << "\t\t\t\t  Here is your Profile \n\n\n";
-}
 // ___________________________________________________________ //
 
 bool Authentication::lettersAndNumbers(std::string& password) {
@@ -77,9 +74,9 @@ void Authentication::registration() {
     // ************************ //
 
     char server[26] = "sql8.freesqldatabase.com";
-    char serverUsername[25] = "sql8644761";
-    char serverPassword[25] = "M8c6DWvEMr";
-    char database[25] = "sql8644761";
+    char serverUsername[15] = "sql8646145";
+    char serverPassword[15] = "z9nFFL1Han";
+    char database[15] = "sql8646145";
 
     MYSQL* conn = mysql_init(NULL);
 
@@ -222,9 +219,9 @@ void Authentication::login() {
 
     // *************************************** //
     char server[26] = "sql8.freesqldatabase.com";
-    char serverUsername[25] = "sql8644761";
-    char serverPassword[25] = "M8c6DWvEMr";
-    char database[25] = "sql8644761";
+    char serverUsername[15] = "sql8646145";
+    char serverPassword[15] = "z9nFFL1Han";
+    char database[15] = "sql8646145";
 
     MYSQL* conn = mysql_init(NULL);
 
@@ -264,11 +261,13 @@ void Authentication::login() {
             mysql_close(conn);
             return;
         }
+        Profile profile;
+
         while ((row = mysql_fetch_row(result))) {
             if (UserName == row[1] && Password == row[2]) {
                 exist = true;
                 std::cout << "\n\n\t\t\t\t Welcome to your profile! \n\n\n";
-                profile();
+                profile.showProfilePage();
                 break;
             } else {
                 exist = false;
