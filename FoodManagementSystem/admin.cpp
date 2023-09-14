@@ -3,7 +3,6 @@
 
 using namespace std;
 
-
 int getTerminalWidth()
 {
   struct winsize size;
@@ -18,7 +17,7 @@ void centeredText(const string &text)
   int textWidth = text.length();
   int padding = (terminalWidth - textWidth) / 2;
 
-  cout << setw(padding + textWidth) << text  ;
+  cout << setw(padding + textWidth) << text;
 }
 void centeredTextEndl(const string &text)
 {
@@ -28,7 +27,7 @@ void centeredTextEndl(const string &text)
   int textWidth = text.length();
   int padding = (terminalWidth - textWidth) / 2;
 
-  cout << setw(padding + textWidth) << text << endl ;
+  cout << setw(padding + textWidth) << text << endl;
 }
 void header()
 {
@@ -36,12 +35,12 @@ void header()
   centeredTextEndl("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
   centeredTextEndl("FOOD MANAGEMENT ");
 }
-void Admin::checkingConnSQL()  
+void Admin::checkingConnSQL()
 {
   Admin obj1;
   SQL obj2;
   header();
-  centeredTextEndl("Checking connection whit SQL databasa , please white ..."); 
+  centeredTextEndl("Checking connection whit SQL databasa , please white ...");
   sleep(2);
 
   if (obj2.SQLconnection() == true)
@@ -52,7 +51,133 @@ void Admin::checkingConnSQL()
 }
 
 SQL::SQL() {}
+bool SQL::SQLconnection()
+{
+  if (mysql_real_connect(conn, server, username, SQLpassword, database, 0, nullptr, 0) == nullptr)
+  {
+    cout << "\t\t\t\t\t\tUnable to connect with MySQL server\n";
+    mysql_close(conn);
+    return false;
+  }
 
+  if (mysql_query(conn, "SELECT * FROM Admin"))
+  {
+    cout << "\t\t\t\t\tQuery execution error." << std::endl;
+    mysql_close(conn);
+    return false;
+  }
+  MYSQL_RES *result = mysql_store_result(conn);
+  if (result == nullptr)
+  {
+    cout << "\t\t\t\t\tResult fetching error." << std::endl;
+    mysql_close(conn);
+    return false;
+  }
+  else
+  {
+    cout << ("\t\t\t\t\t\t\tYour connection is successful!!!\n");
+    return true;
+  }
+};
+void SQL::SQLgetAdminPassLogin()
+
+{
+  if (mysql_real_connect(conn, server, username, SQLpassword, database, 0, nullptr, 0) == nullptr)
+  {
+    std::cerr << "\t\t\t\t\tUnable to connect with MySQL server\n";
+    return;
+  }
+
+  if (mysql_query(conn, "SELECT * FROM Admin"))
+  {
+    std::cerr << "\t\t\t\t\tQuery execution error." << std::endl;
+    mysql_close(conn);
+    return;
+  }
+
+  MYSQL_RES *result = mysql_store_result(conn);
+  if (result == nullptr)
+  {
+    std::cerr << "\t\t\t\t\tResult fetching error." << std::endl;
+    mysql_close(conn);
+    return;
+  }
+
+  int num_fields = mysql_num_fields(result);
+  MYSQL_ROW row;
+  while ((row = mysql_fetch_row(result)))
+  {
+    for (int i = 0; i < num_fields; ++i)
+    {
+      if (row[i] != nullptr && i == 0)
+      {
+        adminname = row[i];
+      }
+      else if (row[i] != nullptr && i == 1)
+      {
+        password = row[i];
+      }
+    }
+    std::cout << std::endl;
+  }
+
+  mysql_free_result(result);
+  mysql_close(conn);
+}
+void SQL::SQLgetOrder()
+
+{
+  
+  if (mysql_real_connect(conn, server, username, SQLpassword, database, 0, nullptr, 0) == nullptr)
+  {
+    std::cerr << "\t\t\t\t\tUnable to connect with MySQL server\n";
+    return;
+  }
+
+  if (mysql_query(conn, "SELECT * FROM ASA"))
+  {
+    std::cerr << "\t\t\t\t\tQuery execution error." << std::endl;
+    mysql_close(conn);
+    return;
+  }
+
+  MYSQL_RES *result = mysql_store_result(conn);
+  if (result == nullptr)
+  {
+    std::cerr << "\t\t\t\t\tResult fetching error." << std::endl;
+    mysql_close(conn);
+    return;
+  }
+
+  int num_fields = mysql_num_fields(result);
+  MYSQL_ROW row;
+  while ((row = mysql_fetch_row(result)))
+  {
+    for (int i = 0; i < num_fields; ++i)
+    {
+      if (row[i] != nullptr )
+      {
+        if (i == 3 ){
+        std::cout << row[i] <<"  "<< std::endl;
+        
+        } else {
+          std::cout<< row[i] << "  "  ; 
+        }
+      } 
+      
+  
+  }
+
+   
+}
+  mysql_free_result(result);
+  mysql_close(conn);
+}
+void SQL::alignment(string &passWord, string &adminName)
+{
+  passWord = password;
+  adminName = adminname;
+}
 Admin::Admin() {}
 
 void Admin::loadingAnimation()
@@ -65,7 +190,7 @@ void Admin::loadingAnimation()
 
     header();
 
-    cout << "\t\t\t\t\t\t\tLoading: [ "; 
+    cout << "\t\t\t\t\t\t\tLoading: [ ";
 
     int barWidth = 40;
     int progressWidth = static_cast<int>(barWidth * progress);
@@ -87,7 +212,7 @@ void Admin::loadingAnimation()
     this_thread::sleep_for(chrono::milliseconds(50));
   }
 
-  centeredTextEndl("Loading complete!") ; 
+  centeredTextEndl("Loading complete!");
 }
 void Admin::adminLogin()
 {
@@ -111,10 +236,10 @@ void Admin::adminLogin()
   string enteredAdminPass;
   Admin::enterPassLog(enteredAdminPass, enteredAdminName);
   int attempt = 0;
-  if (admin.login(enteredAdminPass , enteredAdminName))
+  if (admin.login(enteredAdminPass, enteredAdminName))
   {
     header();
-  centeredTextEndl("Login successful!");
+    centeredTextEndl("Login successful!");
     admin.adminMainPage();
   }
   else
@@ -126,13 +251,13 @@ void Admin::adminLogin()
       attempt++;
       centeredText("Incorrect Password Attempt (");
       cout << attempt << " of 3):\n";
-      centeredTextEndl("Try again !!"); 
+      centeredTextEndl("Try again !!");
 
       Admin::enterPassLog(enteredAdminPass, enteredAdminName);
       if (admin.login(enteredAdminPass, enteredAdminName))
       {
         header();
-       centeredTextEndl("Login successful!"); 
+        centeredTextEndl("Login successful!");
         admin.adminMainPage();
         break;
       }
@@ -140,7 +265,7 @@ void Admin::adminLogin()
       {
 
         system("clear");
-        centeredTextEndl("Too Many Incorrect Password Attempts:") ; 
+        centeredTextEndl("Too Many Incorrect Password Attempts:");
         sleep(1);
         exit(1);
       }
@@ -181,9 +306,11 @@ void Admin::date()
 }
 void Admin::adminMainPage()
 {
-
+  SQL sql ; 
   header();
   centeredTextEndl("Main Page");
+  sql.SQLgetOrder() ; 
+  
 }
 
 int main()
