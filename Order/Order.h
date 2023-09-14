@@ -1,3 +1,6 @@
+#ifndef ORDER_H
+#define ORDER_H
+
 #include <chrono>
 #include <string>
 
@@ -9,6 +12,7 @@ class Order {
     std::chrono::system_clock::time_point date;
     int oilCount;
     int count;
+    int fryingLvl;
     std::string
         orderID;  // This should be in this format - RestName + "_" +  OrderID
 
@@ -16,10 +20,11 @@ class Order {
     Order(const std::string &dishName,
           const std::chrono::system_clock::time_point &date,
           const int &oilCount, const int &count,
-          const std::string &RestNameOrderID);
+          const std::string &RestNameOrderID, const int &fryingLvl);
     void firstPage();
     void fillOrderData(std::string currentUserID);
     void takeOrder(Order order);
     std::pair<MYSQL_RES *, int> fetchMenu(std::string currentUserID);
-    int getDishByID(std::string currentUserID, std::string dishName);
+    MYSQL_ROW getDishByID(std::string currentUserID, std::string dishName);
 };
+#endif

@@ -175,6 +175,7 @@ void Menu::showMenu(std::string Current_user_ID) {
 
     mysql_free_result(result);
     mysql_close(conn);
+    firstPage();
 }
 
 void Menu::deleteMenu(std::string Current_user_ID) {
