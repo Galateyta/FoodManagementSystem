@@ -1,8 +1,9 @@
 #include <iostream>
 
 #include "../Order/Order.h"
+#include "../utils/Utils.h"
 #include "/usr/include/mysql/mysql.h"
+float calculateCoefficientOnOrder(bool post, std::string currentUserID);
 
-void calculateCoefficientOnOrder(std::string currentUserID);
-
-void calculateFrequencyOnOrder(std::string currentUserID, float totalWastedOil);
+float calculateFrequencyOnOrder(bool post, std::string restID,
+                                std::string currentUserID);

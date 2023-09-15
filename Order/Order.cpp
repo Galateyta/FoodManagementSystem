@@ -48,7 +48,7 @@ void Order::takeOrder(Order order) {
         std::cout << "Error while trying to insert order" << std::endl;
         mysql_close(conn);
     }
-    calculateCoefficientOnOrder(currentUserID);
+    calculateCoefficientOnOrder(true, currentUserID);
     firstPage();
 }
 
@@ -113,6 +113,7 @@ void Order::fillOrderData(std::string currentUserID) {
     } else {
         std::cout << "Please use correct options - Y/N." << std::endl;
     }
+    firstPage();
 }
 
 std::pair<MYSQL_RES *, int> Order::fetchMenu(std::string currentUserID) {

@@ -1,3 +1,5 @@
+#include "./Utils.h"
+
 #include <chrono>
 #include <functional>
 #include <iostream>
@@ -27,7 +29,7 @@ std::string generateUniqueID() {
 }
 
 std::string timePointToString(
-    const std::chrono::system_clock::time_point& timePoint) {
+    const std::chrono::system_clock::time_point &timePoint) {
     std::time_t time = std::chrono::system_clock::to_time_t(timePoint);
     char buffer[80];
     std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S",
@@ -37,4 +39,62 @@ std::string timePointToString(
 
 void updateCurrentOilCount(std::string oilCount) {
     // TODO implement this
+}
+std::pair<float, float> getTotalWastedAndUsedOil(std::string currentUserID) {
+    char server[26] = "sql8.freesqldatabase.com";
+    char username[15] = "sql8646145";
+    char password[15] = "z9nFFL1Han";
+    char database[15] = "sql8646145";
+
+    MYSQL *conn = mysql_init(NULL);
+
+    if (mysql_real_connect(conn, server, username, password, database, 0,
+                           nullptr, 0) == nullptr) {
+        std::cerr << "Unable to connect with MySQL server\n";
+        mysql_close(conn);
+    }
+
+    std::string selectRestaurantQuery = "SELECT * FROM ORDERS";
+    if (mysql_query(conn, selectRestaurantQuery.c_str())) {
+        std::cerr << "Query execution error: " << mysql_error(conn)
+                  << std::endl;
+        mysql_close(conn);
+    }
+
+    MYSQL_RES *result = mysql_store_result(conn);
+    if (result == nullptr) {
+        std::cerr << "Result fetching error." << std::endl;
+        mysql_close(conn);
+    }
+
+    float totalWastedOil = 0, totalUsedOil = 0;
+    MYSQL_ROW row;
+    while ((row = mysql_fetch_row(result))) {
+        for (int i = 0; i < mysql_num_fields(result); ++i) {
+            if (row[0] == currentUserID) {
+                totalWastedOil += std::stoi(row[4]) * std::stoi(row[5]);
+                switch (std::stoi(row[6])) {
+                    case 0:
+                        totalUsedOil += std::stoi(row[4]);
+                        break;
+                    case 1:
+                        totalUsedOil +=
+                            std::stoi(row[4]) - (5 / std::stoi(row[4])) * 100;
+                        break;
+                    case 2:
+                        totalUsedOil +=
+                            std::stoi(row[4]) - (10 / std::stoi(row[4])) * 100;
+                        break;
+                    case 3:
+                        totalUsedOil += std::stoi(row[4]) -
+                                        ((30 / std::stoi(row[4])) * 100);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    return std::make_pair(totalWastedOil, totalUsedOil);
 }

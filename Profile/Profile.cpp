@@ -1,5 +1,6 @@
 #include "./Profile.h"
 
+#include "../Analytics/Analytics.h"
 #include "../Menu/Menu.h"
 #include "../Order/Order.h"
 
@@ -26,7 +27,8 @@ void Profile::showProfilePage() {
             order.firstPage();  // TODO change to current user id
             break;
         case 3:
-            // TODO implement redirection to analytics screen
+            Analytics analytics;
+            analytics.firstPage();
             break;
         case 4:
             std::cout << "\t\t\t Thank you! \n\n";
