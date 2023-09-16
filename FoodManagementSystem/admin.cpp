@@ -328,7 +328,7 @@ void Admin::adminMainPage()
   SQL sql;
   header();
   centeredText("Main Page");
-  sql.SQLgetOrder();
+  sql.SQLgetData();
 }
 
 int main()

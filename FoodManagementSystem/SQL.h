@@ -23,7 +23,7 @@ public:
     SQL();
     bool SQLconnection();
     void SQLgetAdminPassLogin() ; 
-    void SQLgetOrder() ; 
+    void SQLgetData() ; 
     void alignment (string & passWord , string & adminName ) ;
 };
 
