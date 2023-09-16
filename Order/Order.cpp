@@ -21,9 +21,9 @@ Order::Order(const std::string &dishName,
 
 int Order::takeOrder(Order order) {
     char server[26] = "sql8.freesqldatabase.com";
-    char username[15] = "sql8644761";
-    char password[15] = "M8c6DWvEMr";
-    char database[15] = "sql8644761";
+    char username[15] = "sql8646145";
+    char password[15] = "z9nFFL1Han";
+    char database[15] = "sql8646145";
 
     MYSQL *conn = mysql_init(NULL);
     if (mysql_real_connect(conn, server, username, password, database, 0, NULL,
@@ -80,9 +80,9 @@ void Order::fillOrderData(std::string currentUserID) {
 
 std::pair<MYSQL_RES *, int> Order::fetchMenu(std::string currentUserID) {
     char server[26] = "sql8.freesqldatabase.com";
-    char username[15] = "sql8644761";
-    char password[15] = "M8c6DWvEMr";
-    char database[15] = "sql8644761";
+    char username[15] = "sql8646145";
+    char password[15] = "z9nFFL1Han";
+    char database[15] = "sql8646145";
 
     MYSQL *conn = mysql_init(NULL);
     // Connecting to database

@@ -7,7 +7,7 @@ int main() {
     Authentication auth;
     Menu menu;
     auth.authPage();
-    menu.firstPage();
+    //menu.firstPage();
 
     return 0;
 }

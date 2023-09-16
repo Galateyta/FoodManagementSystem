@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <curl/curl.h>
 
 #include "../utils/Utils.h"
 #include "/usr/include/mysql/mysql.h"
@@ -300,31 +301,20 @@ void Authentication::forgot() {
 
     switch (choice) {
         case 1: {
-            int count = 0;
-            std::string Fuserid, Fid, Fpass;
-            std::cout << "\t\t\t Enter the USERNAME: ";
-            std::cin >> Fuserid;
-            std::ifstream f3("data.xls");
-            if (f3.is_open()) {
-                while (f3 >> Fid >> Fpass) {
-                    if (Fid == Fuserid) {
-                        count = 1;
-                    }
-                }
-                f3.close();
-            }
-            if (count == 1) {
-                std::cout << "\t\t Your account is found\n";
-                std::cout << "\t\t Your  password is: " << Fpass;  // TODO
-                std::cout << "\n\t\t Your  account is not  found!\n";
-                authPage();
-            }
+            std::string userName;
+            std::cout << "\x1B[2J\x1B[H";
+            std::cout << "Now enter the username with which you registered.\nAnswer: ";
+            std::cin >> userName;
+            
             break;
         }
         case 2: {
             authPage();
+            break;
         }
         default:
             std::cout << "\t\t Wrong choice! Try  again!";
+            forgot();
+            break;
     }
 }
