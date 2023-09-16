@@ -29,16 +29,12 @@ public:
         } else return false ;
     }
     
-    void show () {
-       cout << userName << endl << passWord<< endl ;  
-
-    }
     void adminMainPage() ; 
     void loadingAnimation() ;
     void enterPassLog(string & enteredPass, string &enteredName ) ; 
     void checkingConnSQL() ;
     void adminLogin() ;
-    void date () ;  
+    
     
 
 };

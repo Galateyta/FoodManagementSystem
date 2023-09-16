@@ -12,9 +12,9 @@ private:
     string  password ; 
     string  adminname ; 
     char server[30] = "sql8.freesqldatabase.com";
-    char username[25] = "sql8646215";
-    char SQLpassword[25] = "6VupSBarkg";
-    char database[25] = "sql8646215";
+    char username[25] = "sql8646145";
+    char SQLpassword[25] = "z9nFFL1Han";
+    char database[25] = "sql8646145";
     MYSQL *conn = mysql_init(NULL);
  
 
