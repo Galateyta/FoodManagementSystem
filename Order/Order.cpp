@@ -22,8 +22,7 @@ Order::Order(const std::string &dishName,
       orderID(RestNameOrderID),
       fryingLvl(fryingLevel) {}
 
-void Order::takeOrder(Order order) {
-    std::string currentUserID = "Tashir_ID";  // TODO fix
+void Order::takeOrder(std::string currentUserID, Order order) {
     char server[26] = "sql8.freesqldatabase.com";
     char username[15] = "sql8646145";
     char password[15] = "z9nFFL1Han";
@@ -36,23 +35,26 @@ void Order::takeOrder(Order order) {
         mysql_close(conn);
     }
     std::string insertQuery =
-        "INSERT INTO ORDERS(RestaurantID, ID, DishName, Date, OilCount, Count, "
+        "INSERT INTO ORDERS(RestaurantID, ID, DishName, Date, OilCount, "
+        "Count, "
         "FryingLevel) "
-        "VALUES "
-        "('" +
-        currentUserID + "' , '" + order.orderID + "' , '" + order.dishName +
-        "' , '" + timePointToString(order.date) + "' , '" +
-        std::to_string(order.oilCount) + "' , '" + std::to_string(order.count) +
-        "' , '" + std::to_string(order.fryingLvl) + "')";
+        "VALUES ('" +
+        currentUserID + "','" + order.orderID + "','" + order.dishName + "','" +
+        timePointToString(order.date) + "','" + std::to_string(order.oilCount) +
+        "','" + std::to_string(order.count) + "','" +
+        std::to_string(order.fryingLvl) + "')";
     if (mysql_query(conn, insertQuery.c_str())) {
         std::cout << "Error while trying to insert order" << std::endl;
         mysql_close(conn);
     }
+
+    updateCurrentOilCount(currentUserID, order);
     calculateCoefficientOnOrder(true, currentUserID);
     firstPage();
 }
 
 void Order::firstPage() {
+    std::string currentUserID = GlobalStates::currentUserID;
     int choice;
     Profile profile;
     std::cout << "\t * Press 1 to return to Profile screen. " << std::endl;
@@ -61,12 +63,13 @@ void Order::firstPage() {
     std::cout << "\t Enter your choice: ";
 
     std::cin >> choice;
+
     switch (choice) {
         case 1:
             profile.showProfilePage();
             break;
         case 2:
-            fillOrderData("Tashir_ID");
+            fillOrderData(currentUserID);
             break;
         case 3:
             std::cout << "\t\t\t Thank you! \n\n";
@@ -74,7 +77,7 @@ void Order::firstPage() {
         default:
             std::cout << "\033[2J\033[1;1H";
             std::cout << "\t\t\t Select from the options given above \n";
-            fillOrderData("Tashir_ID");  // TODO fix
+            firstPage();
     }
 }
 void Order::fillOrderData(std::string currentUserID) {
@@ -95,7 +98,6 @@ void Order::fillOrderData(std::string currentUserID) {
     std::cout << "_ ";
     std::cin >> count;
     MYSQL_ROW dishRow = getDishByID(currentUserID, dishName);
-
     int oilCount = std::stoi(dishRow[2]);
     int fryingLevel = std::stoi(dishRow[3]);
 
@@ -107,7 +109,7 @@ void Order::fillOrderData(std::string currentUserID) {
     std::cin >> confirmOrderSumbit;
 
     if (confirmOrderSumbit == "y" || confirmOrderSumbit == "Y") {
-        takeOrder(newOrder);
+        takeOrder(currentUserID, newOrder);
     } else if (confirmOrderSumbit == "n" || confirmOrderSumbit == "N") {
         std::cout << "Order canceled successfully." << std::endl;
     } else {
@@ -149,8 +151,7 @@ std::pair<MYSQL_RES *, int> Order::fetchMenu(std::string currentUserID) {
 }
 
 MYSQL_ROW Order::getDishByID(std::string currentUserID, std::string dishName) {
-    std::pair<MYSQL_RES *, int> result =
-        fetchMenu(currentUserID);  // TODO change this to real id
+    std::pair<MYSQL_RES *, int> result = fetchMenu(currentUserID);
 
     if (result.second != 0) {
         std::cout << "Error while fetching menu." << std::endl;

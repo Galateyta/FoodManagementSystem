@@ -2,6 +2,7 @@
 
 #include "../Order/Order.h"
 #include "../Profile/Profile.h"
+#include "../globalStates/GlobalStates.h"
 
 Order order;
 Profile profile;
@@ -467,38 +468,35 @@ void Menu::deleteMenu(std::string Current_user_ID) {
 }
 
 void Menu::firstPage() {
+    std::string currentUserID = GlobalStates::currentUserID;
     int answer;
     Menu obj;
     std::cout << "\t * Press 1 to Add Menu    " << std::endl;
     std::cout << "\t * Press 2 to Edit Menu   " << std::endl;
     std::cout << "\t * Press 3 to Show Menu   " << std::endl;
     std::cout << "\t * Press 4 to Delete Menu " << std::endl;
-    std::cout << "\t * Press 5 to Take Order" << std::endl;
-    std::cout << "\t * Press 6 to Go to Profile" << std::endl;
-    std::cout << "\t * Press 7 to EXIT \n\n";
+    std::cout << "\t * Press 5 to Go to Profile" << std::endl;
+    std::cout << "\t * Press 6 to EXIT \n\n";
     std::cout << "\t Enter your choice: ";
 
     std::cin >> answer;
     switch (answer) {
         case 1:
-            obj.addMenu("Tashir_ID");
+            obj.addMenu(currentUserID);
             break;
         case 2:
-            editMenu("Tashir_ID");
+            editMenu(currentUserID);
             break;
         case 3:
-            obj.showMenu("Tashir_ID");
+            obj.showMenu(currentUserID);
             break;
         case 4:
-            obj.deleteMenu("Tashir_ID");
+            obj.deleteMenu(currentUserID);
             break;
         case 5:
-            order.firstPage();  // TODO change this to current user id
-            break;
-        case 6:
             profile.showProfilePage();
             break;
-        case 7:
+        case 6:
             std::cout << "\t\t\t Thank you! \n\n";
             break;
         default:

@@ -10,7 +10,6 @@ class Authentication {
     void profile();
     void registration();
     bool lettersAndNumbers(std::string& password);
-    std::string generateID();
     std::string username, password;
     int maxOilCount;
 };

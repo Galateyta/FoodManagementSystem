@@ -2,13 +2,13 @@
 
 #include "../Profile/Profile.h"
 #include "../calculations/Calculations.h"
+#include "../globalStates/GlobalStates.h"
 
 void Analytics::showAnalytics() {
-    std::string restID = "Tashir_ID";
-    std::string currID = "2196617506373257558";
+    std::string currentUserID = GlobalStates::currentUserID;
 
-    float frequency = calculateFrequencyOnOrder(false, restID, currID);
-    float coefficient = calculateCoefficientOnOrder(false, currID);
+    float frequency = calculateFrequencyOnOrder(false, currentUserID);
+    float coefficient = calculateCoefficientOnOrder(false, currentUserID);
 
     std::cout << "Frequency - " << frequency << std::endl;
     std::cout << "Coefficient - " << coefficient << std::endl;

@@ -9,6 +9,7 @@
 #include <string>
 
 #include "../Profile/Profile.h"
+#include "../globalStates/GlobalStates.h"
 #include "../utils/Utils.h"
 #include "/usr/include/mysql/mysql.h"
 
@@ -269,6 +270,7 @@ void Authentication::login() {
 
         while ((row = mysql_fetch_row(result))) {
             if (UserName == row[1] && Password == row[2]) {
+                GlobalStates globalStates(row[0]);
                 exist = true;
                 std::cout << "\n\n\t\t\t\t Welcome to your profile! \n\n\n";
                 profile.showProfilePage();
@@ -287,7 +289,6 @@ void Authentication::login() {
         }
     }
 }
-// ******************************************* //
 
 // _______________________________________________ //
 

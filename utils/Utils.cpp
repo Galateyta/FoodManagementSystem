@@ -37,8 +37,67 @@ std::string timePointToString(
     return buffer;
 }
 
-void updateCurrentOilCount(std::string oilCount) {
-    // TODO implement this
+void updateCurrentOilCount(std::string currentUserID, Order order) {
+    char server[26] = "sql8.freesqldatabase.com";
+    char username[15] = "sql8646145";
+    char password[15] = "z9nFFL1Han";
+    char database[15] = "sql8646145";
+
+    MYSQL *conn = mysql_init(NULL);
+
+    if (mysql_real_connect(conn, server, username, password, database, 0,
+                           nullptr, 0) == nullptr) {
+        std::cerr << "Unable to connect with MySQL server\n";
+        mysql_close(conn);
+    }
+
+    std::string selectOilQuery =
+        "SELECT * FROM RESTAURANTS WHERE ID = '" + currentUserID + "'";
+
+    if (mysql_query(conn, selectOilQuery.c_str())) {
+        std::cerr << "Query execution error: " << mysql_error(conn)
+                  << std::endl;
+        mysql_close(conn);
+    }
+
+    MYSQL_RES *currentOilresult = mysql_store_result(conn);
+    if (currentOilresult == nullptr) {
+        std::cerr << "Result fetching error." << std::endl;
+        mysql_close(conn);
+    }
+    float currentOil = 0;
+
+    MYSQL_ROW roww;
+    while ((roww = mysql_fetch_row(currentOilresult))) {
+        currentOil = std::stoi(roww[8]);
+    }
+    std::string selectRowQuery =
+        "SELECT * FROM RESTAURANTS WHERE ID = '" + currentUserID + "'";
+
+    if (mysql_query(conn, selectRowQuery.c_str())) {
+        std::cerr << "Query execution error: " << mysql_error(conn)
+                  << std::endl;
+        mysql_close(conn);
+    }
+
+    MYSQL_RES *result = mysql_store_result(conn);
+    if (result == nullptr) {
+        std::cerr << "Result fetching error." << std::endl;
+        mysql_close(conn);
+    }
+    float uploadCurrentOilCount = currentOil + (order.oilCount * order.count);
+    std::string updateRowQuery = "UPDATE RESTAURANTS SET CurrentOilCount = " +
+                                 std::to_string(uploadCurrentOilCount) +
+                                 " WHERE ID = '" + currentUserID + "'";
+
+    if (mysql_query(conn, updateRowQuery.c_str())) {
+        std::cerr << "Query execution error: " << mysql_error(conn)
+                  << std::endl;
+        mysql_close(conn);
+    }
+
+    mysql_free_result(result);
+    mysql_close(conn);
 }
 std::pair<float, float> getTotalWastedAndUsedOil(std::string currentUserID) {
     char server[26] = "sql8.freesqldatabase.com";

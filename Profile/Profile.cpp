@@ -24,7 +24,7 @@ void Profile::showProfilePage() {
             menu.firstPage();
             break;
         case 2:
-            order.firstPage();  // TODO change to current user id
+            order.firstPage();
             break;
         case 3:
             Analytics analytics;

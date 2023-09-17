@@ -1,14 +1,13 @@
 #include "./Calculations.h"
 
-float calculateFrequencyOnOrder(bool post, std::string restID,
-                                std::string currentUserID) {
+float calculateFrequencyOnOrder(bool post, std::string currentUserID) {
     char server[26] = "sql8.freesqldatabase.com";
     char username[15] = "sql8646145";
     char password[15] = "z9nFFL1Han";
     char database[15] = "sql8646145";
 
     std::pair<float, float> totalWastedAndUsedOil =
-        getTotalWastedAndUsedOil(restID);
+        getTotalWastedAndUsedOil(currentUserID);
 
     float totalWastedOil = totalWastedAndUsedOil.first / 7;
     MYSQL *conn = mysql_init(NULL);
@@ -83,19 +82,17 @@ float calculateCoefficientOnOrder(bool post, std::string currentUserID) {
         std::cerr << "Result fetching error." << std::endl;
         mysql_close(conn);
     }
-    std::string restID = "Tashir_ID";
     std::pair<float, float> totalWastedAndUsedOil =
-        getTotalWastedAndUsedOil(restID);
+        getTotalWastedAndUsedOil(currentUserID);
     float totalWastedOil = totalWastedAndUsedOil.first;
     float totalUsedOil = totalWastedAndUsedOil.second;
     float coefficient = (totalUsedOil / 7) / (totalWastedOil / 7);
 
-    std::string currID = "2196617506373257558";
     std::string stringCoefficient = std::to_string(coefficient);
     if (post) {
         std::string updateRowQuery =
             "UPDATE RESTAURANTS SET Coefficient = " + stringCoefficient +
-            " WHERE ID = '" + currID + "'";
+            " WHERE ID = '" + currentUserID + "'";
 
         if (mysql_query(conn, updateRowQuery.c_str())) {
             std::cerr << "Query execution error: " << mysql_error(conn)
@@ -103,7 +100,7 @@ float calculateCoefficientOnOrder(bool post, std::string currentUserID) {
             mysql_close(conn);
         }
     }
-    calculateFrequencyOnOrder(true, restID, currID);
+    calculateFrequencyOnOrder(true, currentUserID);
 
     mysql_free_result(result);
     mysql_close(conn);
