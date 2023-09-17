@@ -13,4 +13,9 @@ class Authentication {
     std::string generateID();
     std::string username, password;
     int maxOilCount;
+    void loadingAnimation() ;
+    void header()  ; 
+    void loading() ;
+    void centeredText(const std::string &text ) ;
+    int getTerminalWidth( ) ;
 };

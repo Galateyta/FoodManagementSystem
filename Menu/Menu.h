@@ -1,6 +1,10 @@
 #include <iostream>
-#include <sstream>
 #include <string>
+#include <cstdlib>
+#include <unistd.h>
+#include <iomanip> 
+#include <sys/ioctl.h>
+#include <unistd.h>
 
 #include "/usr/include/mysql/mysql.h"
 
@@ -18,5 +22,8 @@ class Menu {
     void deleteMenu(std::string Current_user_ID);
     void showMenu(std::string Current_user_ID);
     void firstPage();
+    void centeredText(const std::string &text ) ;
+    int getTerminalWidth( ) ;
+    void header() ; 
     std::pair<MYSQL_RES *, int> fetchUser(std::string Current_user_ID);
 };
