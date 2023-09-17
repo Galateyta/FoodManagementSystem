@@ -1,7 +1,11 @@
 #include "../Authentication/Authentication.h"
 
+#include <curl/curl.h>
+
+#include <cstring>
 #include <fstream>
 #include <iostream>
+#include <random>
 #include <string>
 
 #include "../Profile/Profile.h"
@@ -222,6 +226,9 @@ void Authentication::login() {
     char serverUsername[15] = "sql8646145";
     char serverPassword[15] = "z9nFFL1Han";
     char database[15] = "sql8646145";
+    char serverUsername[25] = "sql8646145";
+    char serverPassword[25] = "z9nFFL1Han";
+    char database[25] = "sql8646145";
 
     MYSQL* conn = mysql_init(NULL);
 
@@ -289,7 +296,6 @@ void Authentication::login() {
 
 void Authentication::forgot() {
     int choice;
-    std::cout << "\x1B[2J\x1B[H";
     std::cout << "\n\n\n\t\t\t Forgot your password? We can help you!\n\n";
     std::cout << "\t\t * Press 1 to change your password by email" << std::endl;
     std::cout << "\t\t * Press 2 to  go to the main page" << std::endl;
@@ -299,31 +305,230 @@ void Authentication::forgot() {
 
     switch (choice) {
         case 1: {
-            int count = 0;
-            std::string Fuserid, Fid, Fpass;
-            std::cout << "\t\t\t Enter the USERNAME: ";
-            std::cin >> Fuserid;
-            std::ifstream f3("data.xls");
-            if (f3.is_open()) {
-                while (f3 >> Fid >> Fpass) {
-                    if (Fid == Fuserid) {
-                        count = 1;
+            char server[26] = "sql8.freesqldatabase.com";
+            char username[15] = "sql8646145";
+            char password[15] = "z9nFFL1Han";
+            char database[15] = "sql8646145";
+            std::string chooseUserName, recipient, choosePassword;
+            bool foundUsername = false;
+            std::cout << "\x1B[2J\x1B[H";
+
+            MYSQL* conn = mysql_init(NULL);
+
+            if (mysql_real_connect(conn, server, username, password, database,
+                                   0, nullptr, 0) == nullptr) {
+                std::cerr << "Unable to connect with MySQL server\n";
+                mysql_close(conn);
+                return;
+            }
+
+            std::string Select_column_query =
+                "SELECT Username, Email, Password FROM RESTAURANTS";
+            if (mysql_query(conn, Select_column_query.c_str())) {
+                std::cerr << "Query execution error." << std::endl;
+                mysql_close(conn);
+                return;
+            }
+
+            MYSQL_RES* firstResult = mysql_store_result(conn);
+
+            if (firstResult == nullptr) {
+                std::cerr << "Result fetching error." << std::endl;
+                mysql_close(conn);
+                return;
+            }
+
+            std::cout << "Now enter the username with which you "
+                         "registered.\nAnswer: ";
+            std::cin >> chooseUserName;
+
+            MYSQL_ROW firstRow;
+            while ((firstRow = mysql_fetch_row(firstResult))) {
+                if (firstRow[0] != nullptr && firstRow[0] == chooseUserName) {
+                    foundUsername = true;
+                    recipient = firstRow[1];
+                    choosePassword = firstRow[2];
+                    break;
+                }
+            }
+
+            mysql_free_result(firstResult);
+
+            if (foundUsername) {
+                std::random_device rd;
+                std::mt19937 generator(rd());
+                std::uniform_int_distribution<int> distribution(100000, 999999);
+
+                int randomNumber = distribution(generator), chance = 3, code;
+
+                if (mysql_query(conn, Select_column_query.c_str())) {
+                    std::cerr << "Query execution error." << std::endl;
+                    mysql_close(conn);
+                    return;
+                }
+
+                MYSQL_RES* secondResult = mysql_store_result(conn);
+
+                if (secondResult == nullptr) {
+                    std::cerr << "Result fetching error." << std::endl;
+                    mysql_close(conn);
+                    return;
+                }
+
+                MYSQL_ROW secondRow;
+
+                std::string sender = "sargsyanvahag6@gmail.com";
+                std::string subject = "Blago Team";
+                std::string body =
+                    "<html><head><style>body {font-family: Arial, "
+                    "sans-serif;}.large-font {font-size: "
+                    "18px;}.very-large-font {font-size: 20px;}.move-right "
+                    "{margin-left: 650px;}.for-number {font-size: 30px;color: "
+                    "green;}.for-logo-text {font-size: "
+                    "35px;}</style></head><body><p class='large-font' "
+                    "style=text-align: center;'>Hi " +
+                    chooseUserName +
+                    ",</p><p class='very-large-font' style=text-align: "
+                    "center;'><b>We hope this message finds you well. It seems "
+                    "you've requested a password reset for your Oil Management "
+                    "account. Your account security is important to us, and "
+                    "we're here to assist you in regaining access to your "
+                    "account. To proceed with the password reset, please enter "
+                    "the following number in the terminal.</b></p><p "
+                    "class='for-number' style='text-align: center;'><b>" +
+                    std::to_string(randomNumber) +
+                    "</b></p><p class='for-logo-text' style='text-align: "
+                    "center;'>The Blago Team</p><img "
+                    "src='https://imgtr.ee/images/2023/09/15/"
+                    "8983974c04811e5f05bd79996105d13f.png' alt='Image' "
+                    "style='width: 200px; height: 125px;' "
+                    "class='move-right'><p class='large-font'>Best "
+                    "Regards.</p></body></html>";
+
+                CURL* curl = curl_easy_init();
+
+                if (!curl) {
+                    std::cerr << "Error initializing libcurl." << std::endl;
+                    return;
+                }
+
+                std::string emailData =
+                    "To: " + recipient +
+                    "\r\n"
+                    "From: " +
+                    sender +
+                    "\r\n"
+                    "Subject: " +
+                    subject +
+                    "\r\n"
+                    "MIME-Version: 1.0\r\n"
+                    "Content-Type: text/html; charset=utf-8\r\n\r\n" +
+                    body;
+
+                struct curl_slist* recipients = NULL;
+                recipients = curl_slist_append(recipients, recipient.c_str());
+
+                curl_easy_setopt(curl, CURLOPT_USERNAME,
+                                 "sargsyanvahag6@gmail.com");
+                curl_easy_setopt(curl, CURLOPT_PASSWORD, "ijtmcqbdakiegezn");
+                curl_easy_setopt(curl, CURLOPT_USE_SSL, (long)CURLUSESSL_ALL);
+                std::cout << "\033[2J\033[1;1H";
+                curl_easy_setopt(curl, CURLOPT_URL, "smtps://smtp.gmail.com");
+                std::cout << "\033[2J\033[1;1H";
+                curl_easy_setopt(curl, CURLOPT_PORT, 465);
+                curl_easy_setopt(curl, CURLOPT_MAIL_FROM, sender.c_str());
+                curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
+                // curl_easy_setopt(curl, CURLOPT_READFUNCTION, read_callback);
+                curl_easy_setopt(curl, CURLOPT_READDATA, &emailData);
+                curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
+                curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+
+                // std::cout << "\033[2J\033[1;1H";
+
+                CURLcode res = curl_easy_perform(curl);
+                if (res != CURLE_OK) {
+                    std::cout << "The email you entered was incorrect.\n";
+                    curl_slist_free_all(recipients);
+                    curl_easy_cleanup(curl);
+                    authPage();
+                    return;
+                }
+                curl_slist_free_all(recipients);
+                curl_easy_cleanup(curl);
+
+                std::cout << "We have sent you an email. Enter the code.\n";
+
+                while (chance != 0) {
+                    std::cout << "You have " << chance
+                              << " chances to enter!!!\nAnswer: ";
+                    std::cin >> code;
+                    if (code == randomNumber) {
+                        std::cout << "\x1B[2J\x1B[H";
+                        std::string newPassword;
+                        std::cout << "\t\t\t Now enter a new password: "
+                                  << std::endl;
+                        std::cout << "\t\t\t Your  password must  have "
+                                     "letters, numbers and minimum 6 "
+                                     "symbols "
+                                  << std::endl;
+                        std::cout << "\t\t\t _ ";
+                        std::cin >> newPassword;
+
+                        while (true) {
+                            if (lettersAndNumbers(newPassword)) {
+                                std::cout << "\t\t\t Strong password! \n\n\n ";
+                                break;
+                            } else {
+                                std::cout << "\t\t\t Password have to  contain "
+                                             "both  letters and "
+                                             "numbers. \n";
+                                std::cout << "\t\t\t __ ";
+                                std::cin >> newPassword;
+                            }
+                        }
+
+                        std::string updateRowQuery =
+                            "UPDATE RESTAURANTS SET Password = '" +
+                            newPassword + "' WHERE Username = '" +
+                            chooseUserName + "'";
+
+                        if (mysql_query(conn, updateRowQuery.c_str())) {
+                            std::cerr << "Query execution error." << std::endl;
+                            mysql_close(conn);
+                            return;
+                        }
+
+                        std::cout << "Your password has been successfully "
+                                     "changed!!!\n";
+                        authPage();
+                        break;
+                    } else {
+                        --chance;
                     }
                 }
-                f3.close();
-            }
-            if (count == 1) {
-                std::cout << "\t\t Your account is found\n";
-                std::cout << "\t\t Your  password is: " << Fpass;  // TODO
-                std::cout << "\n\t\t Your  account is not  found!\n";
-                authPage();
+
+                if (chance == 0) {
+                    std::cout << "Sorry, you are no longer able to enter. In "
+                                 "case of questions, you can contact the Blago "
+                                 "Team company.\n";
+                    authPage();
+                }
+            } else {
+                std::cout << "\x1B[2J\x1B[H";
+                std::cout << "There is no such user in the system, you can try "
+                             "again!!!\n";
+                mysql_close(conn);
+                forgot();
             }
             break;
         }
         case 2: {
             authPage();
+            break;
         }
         default:
             std::cout << "\t\t Wrong choice! Try  again!";
+            forgot();
+            break;
     }
 }

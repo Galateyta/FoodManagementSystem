@@ -43,6 +43,10 @@ void Menu::addMenu(std::string Current_user_ID) {
     char username[15] = "sql8646145";
     char password[15] = "z9nFFL1Han";
     char database[15] = "sql8646145";
+    char username[15] = "sql8646145";
+    char password[15] = "z9nFFL1Han";
+    char database[15] = "sql8646145";
+
     MYSQL *conn = mysql_init(NULL);
 
     if (mysql_real_connect(conn, server, username, password, database, 0,
@@ -409,9 +413,9 @@ void Menu::editMenu(std::string Current_user_ID) {
 }
 void Menu::deleteMenu(std::string Current_user_ID) {
     char server[26] = "sql8.freesqldatabase.com";
-    char username[15] = "sql8644761";
-    char password[15] = "M8c6DWvEMr";
-    char database[15] = "sql8644761";
+    char username[15] = "sql8646145";
+    char password[15] = "z9nFFL1Han";
+    char database[15] = "sql8646145";
 
     MYSQL *conn = mysql_init(NULL);
 
