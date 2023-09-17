@@ -4,3 +4,4 @@
 4. ID of menu item should be equal to id of current signed user. You can change it in the main.cpp while calling the fillOrderData function.
 
 RESTAURANTS table in sql should look like this in this exact order - ID, Username, Password, RestaurantName, Address, Email, Role, MaxOilCount, CurrentOilCount, Coefficient, Frequency.
+ORDERS talbe in sql should look like this in this exact order - ID, DishName, Date, OilCount, Count, FryingLevel

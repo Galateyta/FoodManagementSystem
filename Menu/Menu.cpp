@@ -1,9 +1,10 @@
 #include "Menu.h"
 
 #include "../Order/Order.h"
+#include "../Profile/Profile.h"
 
 Order order;
-
+Profile profile;
 Menu::Menu(){};
 std::pair<MYSQL_RES *, int> Menu::fetchUser(std::string Current_user_ID) {
     char server[26] = "sql8.freesqldatabase.com";
@@ -39,6 +40,9 @@ std::pair<MYSQL_RES *, int> Menu::fetchUser(std::string Current_user_ID) {
 
 void Menu::addMenu(std::string Current_user_ID) {
     char server[26] = "sql8.freesqldatabase.com";
+    char username[15] = "sql8646145";
+    char password[15] = "z9nFFL1Han";
+    char database[15] = "sql8646145";
     char username[15] = "sql8646145";
     char password[15] = "z9nFFL1Han";
     char database[15] = "sql8646145";
@@ -175,8 +179,238 @@ void Menu::showMenu(std::string Current_user_ID) {
 
     mysql_free_result(result);
     mysql_close(conn);
+    firstPage();
 }
+void Menu::editMenu(std::string Current_user_ID) {
+    char server[26] = "sql8.freesqldatabase.com";
+    char username[15] = "sql8646125";
+    char password[15] = "vhgkXuVI7C";
+    char database[15] = "sql8646125";
+    MYSQL *conn = mysql_init(NULL);
+    if (mysql_real_connect(conn, server, username, password, database, 0,
+                           nullptr, 0) == nullptr) {
+        std::cerr << "Unable to connect with MySQL server\n";
+        mysql_close(conn);
+        return;
+    }
+    std::string Select_column_query =
+        "SELECT * FROM MENU WHERE ID = '" + Current_user_ID + "'";
+    if (mysql_query(conn, Select_column_query.c_str())) {
+        std::cerr << "Query execution error." << std::endl;
+        mysql_close(conn);
+        return;
+    }
+    MYSQL_RES *firstResult = mysql_store_result(conn);
 
+    if (firstResult == nullptr) {
+        std::cerr << "Result fetching error." << std::endl;
+        mysql_close(conn);
+        return;
+    }
+    Menu Restaurant;
+    int editDelete, secondChoise, newOilCount, newFryingLevel, Rows_count = 0,
+                                                               Row_index = 0;
+    std::string oldDishName, newDishName, oldOilCount, oldFryingLevel,
+        updateRowQuery, firstChoise;
+    MYSQL_ROW firstRow;
+
+    while (firstRow = mysql_fetch_row(firstResult)) {
+        Rows_count++;
+    }
+    mysql_free_result(firstResult);
+    if (mysql_query(conn, Select_column_query.c_str())) {
+        std::cerr << "Query execution error." << std::endl;
+        mysql_close(conn);
+        return;
+    }
+    MYSQL_RES *Result = mysql_store_result(conn);
+
+    if (Result == nullptr) {
+        std::cerr << "Result fetching error." << std::endl;
+        mysql_close(conn);
+        return;
+    }
+    MYSQL_ROW Row;
+    std::cout << "1. Edit the some food\n2. Delete the some food\n3. Back\n";
+    while (editDelete != 1 && editDelete != 2 && editDelete != 3) {
+        std::cout << "Please enter the number from 1 to 3\n";
+        std::cout << "Answer: ";
+        std::cin >> editDelete;
+    }
+
+    if (editDelete == 1) {
+        std::cout << "\nIts your menu, choose what position you want to "
+                     "edit!!!\nFor cancel enter x.\n";
+        Restaurant.showMenu(Current_user_ID);
+        while (true) {
+            std::cout << "Answer: ";
+            std::cin >> firstChoise;
+            if (firstChoise == "x" || firstChoise == "X") {
+                break;
+            } else {
+                std::stringstream convertString(firstChoise);
+                int number;
+                if (!(convertString >> number)) {
+                    std::cerr << "Invalid input: Not a valid integer."
+                              << std::endl;  // edit
+                    return;
+                }
+                if (number >= 1 && number <= Rows_count) {
+                    while ((Row = mysql_fetch_row(Result))) {
+                        Row_index++;
+                        if (Row_index == number) {
+                            oldDishName = Row[1];
+                            oldOilCount = Row[2];
+                            oldFryingLevel = Row[3];
+                        }
+                    }
+                    std::cout << "Which position do you want to change, enter "
+                                 "the corresponding number.\n";
+                    std::cout << "1. Dishname\n2. Oil count\n3. Frying level\n";
+                    while (secondChoise != 1 && secondChoise != 2 &&
+                           secondChoise != 3) {
+                        std::cout << "Please enter the number from 1 to 3\n";
+                        std::cout << "Answer: ";
+                        std::cin >> secondChoise;
+                    }
+                    switch (secondChoise) {
+                        case 1:
+                            std::cout << "New Dishname: ";
+                            std::cin.ignore();
+                            std::getline(std::cin, newDishName);
+                            updateRowQuery =
+                                "UPDATE MENU SET DishName = '" + newDishName +
+                                "' WHERE ID = '" + Current_user_ID +
+                                "' AND DishName = '" + oldDishName +
+                                "' AND OilCount = " + oldOilCount +
+                                " AND FryingLevel = " + oldFryingLevel;
+                            if (mysql_query(conn, updateRowQuery.c_str())) {
+                                std::cerr << "Query execution error: "
+                                          << mysql_error(conn) << std::endl;
+                                mysql_close(conn);
+                                return;
+                            }
+                            break;
+                        case 2:
+                            std::cout << "New Oil Count: ";
+                            std::cin >> newOilCount;
+                            updateRowQuery =
+                                "UPDATE MENU SET OilCount = " +
+                                std::to_string(newOilCount) + " WHERE ID = '" +
+                                Current_user_ID + "' AND DishName = '" +
+                                oldDishName +
+                                "' AND OilCount = " + oldOilCount +
+                                " AND FryingLevel = " + oldFryingLevel;
+                            if (mysql_query(conn, updateRowQuery.c_str())) {
+                                std::cerr << "Query execution error: "
+                                          << mysql_error(conn) << std::endl;
+                                mysql_close(conn);
+                                return;
+                            }
+                            break;
+                        case 3:
+                            std::cout
+                                << "New Frying Level(there are 3 choises)\n";
+                            while (true) {
+                                std::cout << "Enter your choise\n";
+                                std::cout << "0. Zero level(0%)\n";
+                                std::cout << "1. First level(5%)\n";
+                                std::cout << "2. Second level(10%)\n";
+                                std::cout << "3. Third level(15%)\n";
+                                std::cin >> newFryingLevel;
+                                if (newFryingLevel != 0 &&
+                                    newFryingLevel != 1 &&
+                                    newFryingLevel != 2 &&
+                                    newFryingLevel != 3) {
+                                    std::cout << "\tPlease choose one of the 3 "
+                                                 "options!!!\n";
+                                    continue;
+                                }
+                                break;
+                            }
+                            updateRowQuery =
+                                "UPDATE MENU SET FryingLevel = " +
+                                std::to_string(newFryingLevel) +
+                                " WHERE ID = '" + Current_user_ID +
+                                "' AND DishName = '" + oldDishName +
+                                "' AND OilCount = " + oldOilCount +
+                                " AND FryingLevel = " + oldFryingLevel;
+                            if (mysql_query(conn, updateRowQuery.c_str())) {
+                                std::cerr << "Query execution error: "
+                                          << mysql_error(conn) << std::endl;
+                                mysql_close(conn);
+                                return;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                    std::cout
+                        << "Do you want to change any position again?\nIf yes, "
+                           "enter which position, otherwise x!!!\n";
+                    continue;
+                } else {
+                    std::cout << "Please enter the number from 1 to "
+                              << Rows_count << "!!!\n";
+                    continue;
+                }
+            }
+        }
+    } else if (editDelete == 2) {
+        std::cout << "\nIts your menu, choose what position you want to "
+                     "delete!!!\nFor cancel enter x.\n";
+        Restaurant.showMenu(Current_user_ID);
+        while (true) {
+            std::cout << "Answer: ";
+            std::cin >> firstChoise;
+            if (firstChoise == "x" || firstChoise == "X") {
+                break;
+            } else {
+                std::stringstream convertString(firstChoise);
+                int number;
+                if (!(convertString >> number)) {
+                    std::cerr << "Invalid input: Not a valid integer."
+                              << std::endl;  // edit
+                    return;
+                }
+                if (number >= 1 && number <= Rows_count) {
+                    while ((Row = mysql_fetch_row(Result))) {
+                        Row_index++;
+                        if (Row_index == number) {
+                            oldDishName = Row[1];
+                            oldOilCount = Row[2];
+                            oldFryingLevel = Row[3];
+                        }
+                    }
+                    std::string deleteRowQuery =
+                        "DELETE FROM MENU WHERE ID = '" + Current_user_ID +
+                        "' AND DishName = '" + oldDishName +
+                        "' AND OilCount = " + oldOilCount +
+                        " AND FryingLevel = " + oldFryingLevel;
+                    if (mysql_query(conn, deleteRowQuery.c_str())) {
+                        std::cerr
+                            << "Query execution error: " << mysql_error(conn)
+                            << std::endl;
+                        mysql_close(conn);
+                        return;
+                    }
+                    std::cout << "The dish " << oldDishName
+                              << " was deleted successfully!!!\n";
+                    std::cout
+                        << "Do you want to delete any position again?\nIf yes, "
+                           "enter which position, otherwise x!!!\n";
+                    continue;
+                } else {
+                    std::cout << "Please enter the number from 1 to "
+                              << Rows_count << "!!!\n";
+                    continue;
+                }
+            }
+        }
+    }
+    firstPage();
+    mysql_close(conn);
+}
 void Menu::deleteMenu(std::string Current_user_ID) {
     char server[26] = "sql8.freesqldatabase.com";
     char username[15] = "sql8646145";
@@ -243,7 +477,8 @@ void Menu::firstPage() {
     std::cout << "\t * Press 3 to Show Menu   " << std::endl;
     std::cout << "\t * Press 4 to Delete Menu " << std::endl;
     std::cout << "\t * Press 5 to Take Order" << std::endl;
-    std::cout << "\t * Press 6 to EXIT \n\n";
+    std::cout << "\t * Press 6 to Go to Profile" << std::endl;
+    std::cout << "\t * Press 7 to EXIT \n\n";
     std::cout << "\t Enter your choice: ";
 
     std::cin >> answer;
@@ -252,7 +487,7 @@ void Menu::firstPage() {
             obj.addMenu("Tashir_ID");
             break;
         case 2:
-            // Edit_menu();
+            editMenu("Tashir_ID");
             break;
         case 3:
             obj.showMenu("Tashir_ID");
@@ -261,10 +496,12 @@ void Menu::firstPage() {
             obj.deleteMenu("Tashir_ID");
             break;
         case 5:
-            order.fillOrderData(
-                "Tashir_ID");  // TODO change this to current user id
+            order.firstPage();  // TODO change this to current user id
             break;
         case 6:
+            profile.showProfilePage();
+            break;
+        case 7:
             std::cout << "\t\t\t Thank you! \n\n";
             break;
         default:
