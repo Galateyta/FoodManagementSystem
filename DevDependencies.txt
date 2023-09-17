@@ -1,7 +1,7 @@
-1. If you are having issues with compiling program use "-lmysqlclient" flag.
-2. Make sure orders table created during registration with name - "ORDERS".
-3. Make sure having "MENU" table with this columns with the same order - ID(text), DishName(text), OilCount(int), FryingLevel(text).
-4. ID of menu item should be equal to id of current signed user. You can change it in the main.cpp while calling the fillOrderData function.
+1. Compile code using - " g++ main.cpp Menu/Menu.cpp Order/Order.cpp Authentication/Authentication.cpp utils/Utils.cpp Profile/Profile.cpp calculations/Calculations.cpp Analytics/Analytics.cpp -lmysqlclient -lcurl" command.
+2. Make sure the orders table the created during registration with the name - "ORDERS".
+3. Make sure to have a "MENU" table with these columns in the same order - ID(text), DishName(text), OilCount(int), FryingLevel(text).
+4. ID of the menu item should be equal to the id of the current signed user. You can change it in the main.cpp while calling the fillOrderData function.
 
-RESTAURANTS table in sql should look like this in this exact order - ID, Username, Password, RestaurantName, Address, Email, Role, MaxOilCount, CurrentOilCount, Coefficient, Frequency.
-ORDERS talbe in sql should look like this in this exact order - ID, DishName, Date, OilCount, Count, FryingLevel
+RESTAURANTS table in the sql should look like this in this exact order - ID, Username, Password, RestaurantName, Address, Email, Role, MaxOilCount, CurrentOilCount, Coefficient, Frequency.
+ORDERS table in sql should look like this in this exact order - ID, DishName, Date, OilCount, Count, FryingLevel

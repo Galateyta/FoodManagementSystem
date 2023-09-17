@@ -226,9 +226,6 @@ void Authentication::login() {
     char serverUsername[15] = "sql8646145";
     char serverPassword[15] = "z9nFFL1Han";
     char database[15] = "sql8646145";
-    char serverUsername[25] = "sql8646145";
-    char serverPassword[25] = "z9nFFL1Han";
-    char database[25] = "sql8646145";
 
     MYSQL* conn = mysql_init(NULL);
 

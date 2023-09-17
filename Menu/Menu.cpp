@@ -43,9 +43,6 @@ void Menu::addMenu(std::string Current_user_ID) {
     char username[15] = "sql8646145";
     char password[15] = "z9nFFL1Han";
     char database[15] = "sql8646145";
-    char username[15] = "sql8646145";
-    char password[15] = "z9nFFL1Han";
-    char database[15] = "sql8646145";
 
     MYSQL *conn = mysql_init(NULL);
 
