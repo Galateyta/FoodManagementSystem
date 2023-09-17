@@ -1,29 +1,28 @@
 #include "../Authentication/Authentication.h"
 
+#include <sys/ioctl.h>
+#include <unistd.h>
+
+#include <chrono>
+#include <cstdlib>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <string>
+#include <thread>
 
+#include "../Profile/Profile.h"
+#include "../globalStates/GlobalStates.h"
 #include "../utils/Utils.h"
 #include "/usr/include/mysql/mysql.h"
 
-#include <sys/ioctl.h>
-#include <cstdlib>
-#include <unistd.h>
-#include <iomanip>
-#include <chrono>
-#include <thread>
-
-int Authentication::getTerminalWidth ()
-{
+int Authentication::getTerminalWidth() {
     struct winsize size;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
     return size.ws_col;
 }
 
-void Authentication::centeredText(const std::string &text)
-{
-
+void Authentication::centeredText(const std::string &text) {
     int terminalWidth = getTerminalWidth();
 
     int textWidth = text.length();
@@ -31,19 +30,16 @@ void Authentication::centeredText(const std::string &text)
 
     std::cout << std::setw(padding + textWidth) << text << std::endl;
 }
-void Authentication::header()
-{
+void Authentication::header() {
     system("clear");
     centeredText("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
     centeredText("\033[32m FOOD MANAGEMENT ");
 };
 
-void Authentication::loadingAnimation()
-{
+void Authentication::loadingAnimation() {
     int totalIterations = 100;
 
-    for (int i = 0; i <= totalIterations; ++i)
-    {
+    for (int i = 0; i <= totalIterations; ++i) {
         float progress = static_cast<float>(i) / totalIterations;
 
         header();
@@ -53,14 +49,10 @@ void Authentication::loadingAnimation()
         int barWidth = getTerminalWidth() - 20;
         int progressWidth = static_cast<int>(barWidth * progress);
 
-        for (int j = 0; j < barWidth; ++j)
-        {
-            if (j <= progressWidth)
-            {
+        for (int j = 0; j < barWidth; ++j) {
+            if (j <= progressWidth) {
                 std::cout << "#";
-            }
-            else
-            {
+            } else {
                 std::cout << ".";
             }
         }
@@ -69,20 +61,18 @@ void Authentication::loadingAnimation()
 
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
-    system("clear") ; 
-    header() ; 
+    system("clear");
+    header();
     centeredText("Loading complete!");
     sleep(1);
 }
-void Authentication::loading()
-{
+void Authentication::loading() {
     loadingAnimation();
     header();
     authPage();
 }
-void Authentication::authPage()
-{
-    header() ; 
+void Authentication::authPage() {
+    header();
     int choice;
     std::cout << "\t\033[32m * Press 1 to Login    " << std::endl;
     std::cout << "\t * Press 2 to Register " << std::endl;
@@ -92,52 +82,42 @@ void Authentication::authPage()
     std::cin >> choice;
     std::cout << std::endl;
 
-    switch (choice)
-    {
-    case 1:
-        login();
-        break;
-    case 2:
-        registration();
-        break;
-    case 3:
-        forgot();
-        break;
-    case 4:
-        system("clear"); 
-        centeredText("Thank You!");
-        break;
-    default:
-        system("clear") ; 
-        centeredText("\033[31m Select from the options given above");
-        sleep(2);
-        system("clear") ; 
-        authPage();
+    switch (choice) {
+        case 1:
+            login();
+            break;
+        case 2:
+            registration();
+            break;
+        case 3:
+            forgot();
+            break;
+        case 4:
+            system("clear");
+            centeredText("Thank You!");
+            break;
+        default:
+            system("clear");
+            centeredText("\033[31m Select from the options given above");
+            sleep(2);
+            system("clear");
+            authPage();
     }
 }
 
-void Authentication::profile()
-{
- centeredText(" Here is your Profile") ; 
-}
+void Authentication::profile() { centeredText(" Here is your Profile"); }
 // ___________________________________________________________ //
 
-bool Authentication::lettersAndNumbers(std::string &password)
-{
+bool Authentication::lettersAndNumbers(std::string &password) {
     bool hasLetters = false;
     bool hasNumbers = false;
-    for (char c : password)
-    {
-        if (isalpha(c))
-        {
+    for (char c : password) {
+        if (isalpha(c)) {
             hasLetters = true;
-        }
-        else if (isdigit(c))
-        {
+        } else if (isdigit(c)) {
             hasNumbers = true;
         }
-        if (hasLetters && hasNumbers)
-        {
+        if (hasLetters && hasNumbers) {
             break;
         }
     }
@@ -145,12 +125,11 @@ bool Authentication::lettersAndNumbers(std::string &password)
 }
 // _________________________________________________________________ //
 
-void Authentication::registration()
-{
+void Authentication::registration() {
     std::string RestName, Address, Email;
     int a;
     char userrole[20] = "User";
-    system("clear"); 
+    system("clear");
 
     centeredText(" Create a USERNAME:");
     std::cout << "\t\t\t _ ";
@@ -164,30 +143,26 @@ void Authentication::registration()
 
     MYSQL *conn = mysql_init(NULL);
 
-    if (conn == NULL)
-    {
+    if (conn == NULL) {
         printf("\033[31m MySQL initialization failed");
         return;
     }
 
     if (mysql_real_connect(conn, server, serverUsername, serverPassword,
-                           database, 0, NULL, 0) == NULL)
-    {
+                           database, 0, NULL, 0) == NULL) {
         printf("\033[31m Unable to connect with MySQL server\n");
         mysql_close(conn);
         return;
     }
 
-    if (mysql_query(conn, "SELECT * FROM RESTAURANTS"))
-    {
+    if (mysql_query(conn, "SELECT * FROM RESTAURANTS")) {
         std::cout << "\033[31m Unable to  connect with MySQL server\n";
         mysql_close(conn);
         return;
     }
 
     MYSQL_RES *result = mysql_store_result(conn);
-    if (result == NULL)
-    {
+    if (result == NULL) {
         std::cout << "\033[31m Result fetching error." << std::endl;
         mysql_close(conn);
         return;
@@ -195,13 +170,11 @@ void Authentication::registration()
 
     int num_fields = mysql_num_fields(result);
     MYSQL_ROW row;
-    while ((row = mysql_fetch_row(result)))
-    {
-        for (int i = 0; i < num_fields; ++i)
-        {
-            if (username == row[i])
-            {
-                centeredText("\033[31m This username already exist! Try again! ") ; 
+    while ((row = mysql_fetch_row(result))) {
+        for (int i = 0; i < num_fields; ++i) {
+            if (username == row[i]) {
+                centeredText(
+                    "\033[31m This username already exist! Try again! ");
                 std::cout << "\t\t\t __ ";
                 std::cin >> username;
             }
@@ -212,33 +185,32 @@ void Authentication::registration()
     mysql_close(conn);
 
     // ************************* //
-    centeredText("\033[32m Enter your public food place name: ") ; 
+    centeredText("\033[32m Enter your public food place name: ");
     std::cout << "\t\t\t _ ";
     std::cin.ignore();
     std::getline(std::cin, RestName);
 
-    centeredText("Create a PASSWORD: ") ; 
-    centeredText("Your  password must  have letters, numbers and minimum 6 symbols");
+    centeredText("Create a PASSWORD: ");
+    centeredText(
+        "Your  password must  have letters, numbers and minimum 6 symbols");
     std::cout << "\t\t\t _ ";
     std::cin >> password;
 
-    while (password.length() < 6)
-    {
-        centeredText("\033[31m Your password must have minimum 6 symbols . Try again "); 
-        centeredText("\033[32m Create a PASSWORD:") ;
+    while (password.length() < 6) {
+        centeredText(
+            "\033[31m Your password must have minimum 6 symbols . Try again ");
+        centeredText("\033[32m Create a PASSWORD:");
         std::cout << "\t\t\t _ ";
         std::cin >> password;
     }
-    while (true)
-    {
-        if (lettersAndNumbers(password))
-        {
-            centeredText("Strong password! ") ; 
+    while (true) {
+        if (lettersAndNumbers(password)) {
+            centeredText("Strong password! ");
             break;
-        }
-        else
-        {
-            centeredText("\033[31m Password have to  contain both  letters and numbers.");
+        } else {
+            centeredText(
+                "\033[31m Password have to  contain both  letters and "
+                "numbers.");
             std::cout << "\t\t\t __ ";
             std::cin >> password;
         }
@@ -263,15 +235,13 @@ void Authentication::registration()
 
     MYSQL *connn = mysql_init(NULL);
 
-    if (connn == NULL)
-    {
+    if (connn == NULL) {
         printf("\033[31m MySQL initialization failed");
         return;
     }
 
     if (mysql_real_connect(connn, server, serverUsername, serverPassword,
-                           database, 0, NULL, 0) == NULL)
-    {
+                           database, 0, NULL, 0) == NULL) {
         printf("\033[31m Unable to connect with MySQL server\n");
         mysql_close(connn);
         return;
@@ -291,22 +261,20 @@ void Authentication::registration()
         "')";
     std::string insertQuery = queryString;
 
-    if (mysql_query(connn, insertQuery.c_str()))
-    {
+    if (mysql_query(connn, insertQuery.c_str())) {
         mysql_close(connn);
         return;
     }
 
-    centeredText(" Now you can login to your profile. "); 
-    sleep(2) ;
-    system("clear") ;
+    centeredText(" Now you can login to your profile. ");
+    sleep(2);
+    system("clear");
     authPage();
 }
 
 // ________________________________________________________ //
 
-void Authentication::login()
-{
+void Authentication::login() {
     int count;
     std::string UserName, Password;
 
@@ -314,21 +282,19 @@ void Authentication::login()
 
     // *************************************** //
     char server[26] = "sql8.freesqldatabase.com";
-    char serverUsername[25] = "sql8644761";
-    char serverPassword[25] = "M8c6DWvEMr";
-    char database[25] = "sql8644761";
+    char serverUsername[15] = "sql8646145";
+    char serverPassword[15] = "z9nFFL1Han";
+    char database[15] = "sql8646145";
 
     MYSQL *conn = mysql_init(NULL);
 
-    if (conn == NULL)
-    {
+    if (conn == NULL) {
         centeredText("\033[31m MySQL initialization failed");
         return;
     }
 
     if (mysql_real_connect(conn, server, serverUsername, serverPassword,
-                           database, 0, NULL, 0) == NULL)
-    {
+                           database, 0, NULL, 0) == NULL) {
         centeredText("\033[31m Unable to connect with MySQL server\n");
         mysql_close(conn);
         return;
@@ -337,62 +303,54 @@ void Authentication::login()
     bool exist = false;
     MYSQL_RES *result = mysql_store_result(conn);
     MYSQL_ROW row;
-    while (!exist)
-    {
+    while (!exist) {
         std::cout << "\t\t\t Enter username:  ";
         std::cin >> UserName;
         std::cout << "\t\t\t Enter password:  ";
         std::cin >> Password;
         std::string selectAllQuery = "SELECT * FROM RESTAURANTS";
 
-        if (mysql_query(conn, "SELECT * FROM RESTAURANTS"))
-        {
+        if (mysql_query(conn, "SELECT * FROM RESTAURANTS")) {
             centeredText("\033[31m Unable to  connect with MySQL server\n");
             mysql_close(conn);
             return;
         }
 
         MYSQL_RES *result = mysql_store_result(conn);
-        if (result == NULL)
-        {
-            centeredText("\033[31m Result fetching error.") ;
+        if (result == NULL) {
+            centeredText("\033[31m Result fetching error.");
             mysql_close(conn);
             return;
         }
-        while ((row = mysql_fetch_row(result)))
-        {
-            if (UserName == row[1] && Password == row[2])
-            {
+        Profile profile;
+
+        while ((row = mysql_fetch_row(result))) {
+            if (UserName == row[1] && Password == row[2]) {
+                GlobalStates globalStates(row[0]);
                 exist = true;
                 centeredText("\033[32m Welcome to your profile!");
-                profile();
+                profile.showProfilePage();
                 break;
-            }
-            else
-            {
+            } else {
                 exist = false;
             }
         }
-        if (exist)
-        {
+        if (exist) {
             mysql_free_result(result);
             mysql_close(conn);
             break;
-        }
-        else
-        {
-            centeredText("\033[31m Username or password is incorrect!. Try again! \n\n");
+        } else {
+            centeredText(
+                "\033[31m Username or password is incorrect!. Try again! \n\n");
             system("clear");
             continue;
         }
     }
 }
-// ******************************************* //
 
 // _______________________________________________ //
 
-void Authentication::forgot()
-{
+void Authentication::forgot() {
     int choice;
     std::cout << "\x1B[2J\x1B[H";
     std::cout << "\n\n\n\t\t\t Forgot your password? We can help you!\n\n";
@@ -402,40 +360,33 @@ void Authentication::forgot()
     std::cout << "\t\t __ ";
     std::cin >> choice;
 
-    switch (choice)
-    {
-    case 1:
-    {
-        int count = 0;
-        std::string Fuserid, Fid, Fpass;
-        std::cout << "\t\t\t Enter the USERNAME: ";
-        std::cin >> Fuserid;
-        std::ifstream f3("data.xls");
-        if (f3.is_open())
-        {
-            while (f3 >> Fid >> Fpass)
-            {
-                if (Fid == Fuserid)
-                {
-                    count = 1;
+    switch (choice) {
+        case 1: {
+            int count = 0;
+            std::string Fuserid, Fid, Fpass;
+            std::cout << "\t\t\t Enter the USERNAME: ";
+            std::cin >> Fuserid;
+            std::ifstream f3("data.xls");
+            if (f3.is_open()) {
+                while (f3 >> Fid >> Fpass) {
+                    if (Fid == Fuserid) {
+                        count = 1;
+                    }
                 }
+                f3.close();
             }
-            f3.close();
+            if (count == 1) {
+                std::cout << "\t\t Your account is found\n";
+                std::cout << "\t\t Your  password is: " << Fpass;  // TODO
+                std::cout << "\n\t\t Your  account is not  found!\n";
+                authPage();
+            }
+            break;
         }
-        if (count == 1)
-        {
-            std::cout << "\t\t Your account is found\n";
-            std::cout << "\t\t Your  password is: " << Fpass; // TODO
-            std::cout << "\n\t\t Your  account is not  found!\n";
+        case 2: {
             authPage();
         }
-        break;
-    }
-    case 2:
-    {
-        authPage();
-    }
-    default:
-        std::cout << "\t\t Wrong choice! Try  again!";
+        default:
+            std::cout << "\t\t Wrong choice! Try  again!";
     }
 }

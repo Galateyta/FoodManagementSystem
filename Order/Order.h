@@ -13,8 +13,7 @@ class Order {
     int oilCount;
     int count;
     int fryingLvl;
-    std::string
-        orderID;  // This should be in this format - RestName + "_" +  OrderID
+    std::string orderID;
 
     Order();
     Order(const std::string &dishName,
@@ -23,7 +22,7 @@ class Order {
           const std::string &RestNameOrderID, const int &fryingLvl);
     void firstPage();
     void fillOrderData(std::string currentUserID);
-    void takeOrder(Order order);
+    void takeOrder(std::string currentUserID, Order order);
     std::pair<MYSQL_RES *, int> fetchMenu(std::string currentUserID);
     MYSQL_ROW getDishByID(std::string currentUserID, std::string dishName);
 };

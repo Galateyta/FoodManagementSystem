@@ -1,6 +1,7 @@
 #include <chrono>
 #include <string>
 
+#include "../Order/Order.h"
 #include "/usr/include/mysql/mysql.h"
 
 std::string timePointToString(
@@ -8,6 +9,6 @@ std::string timePointToString(
 
 std::string generateUniqueID();
 
-void updateCurrentOilCount(std::string oilCount);
+void updateCurrentOilCount(std::string currentUserID, Order order);
 
 std::pair<float, float> getTotalWastedAndUsedOil(std::string currentUserID);
