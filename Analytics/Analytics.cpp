@@ -4,7 +4,31 @@
 #include "../calculations/Calculations.h"
 #include "../globalStates/GlobalStates.h"
 
-void Analytics::showAnalytics() {
+int Analytics::getTerminalWidth()
+{
+    struct winsize size;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
+    return size.ws_col;
+}
+
+void Analytics::centeredText(const std::string &text)
+{
+    int terminalWidth = getTerminalWidth();
+
+    int textWidth = text.length();
+    int padding = (terminalWidth - textWidth) / 2;
+
+    std::cout << std::setw(padding + textWidth) << text << std::endl;
+}
+void Analytics::header()
+{
+    system("clear");
+    centeredText("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+    centeredText("\033[32m FOOD MANAGEMENT ");
+};
+
+void Analytics::showAnalytics()
+{
     std::string currentUserID = GlobalStates::currentUserID;
 
     float frequency = calculateFrequencyOnOrder(false, currentUserID);
@@ -15,28 +39,33 @@ void Analytics::showAnalytics() {
     firstPage();
 }
 
-void Analytics::firstPage() {
+void Analytics::firstPage()
+{
     Profile profile;
 
-    std::cout << "\t\t\t --------- Welcome to Analytics Page --------- \n\n";
+    header();
+    centeredText("= --------- Welcome to Analytics Page --------- ");
     int choice;
-    std::cout << "\t * Press 1 to Show Analytics " << std::endl;
-    std::cout << "\t * Press 2 to Go Back to Profile " << std::endl;
-    std::cout << "\t * Press 3 to EXIT \n\n";
+    centeredText(" * Press 1 to Show Analytics ");
+    centeredText(" * Press 2 to Go Back to Profile ");
+    centeredText(" * Press 3 to EXIT ");
     std::cout << "\t Enter your choice: ";
     std::cin >> choice;
-    switch (choice) {
-        case 1:
-            showAnalytics();
-            break;
-        case 2:
-            profile.showProfilePage();
-            break;
-        case 3:
-            std::cout << "\t\t\t Thank you! \n\n";
-            break;
-        default:
-            std::cout << "\033[2J\033[1;1H";
-            std::cout << "\t\t\t Select from the options given above \n";
+    switch (choice)
+    {
+    case 1:
+        showAnalytics();
+        break;
+    case 2:
+        profile.showProfilePage();
+        break;
+    case 3:
+        header();
+        centeredText(" Thank you! ");
+        break;
+    default:
+
+        header();
+        centeredText(" Select from the options given above ");
     }
 }

@@ -5,6 +5,8 @@
 #include <iomanip> 
 #include <sys/ioctl.h>
 #include <unistd.h>
+#include <cstring>
+
 
 #include "/usr/include/mysql/mysql.h"
 
