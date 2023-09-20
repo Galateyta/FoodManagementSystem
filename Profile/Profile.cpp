@@ -4,21 +4,46 @@
 #include "../Menu/Menu.h"
 #include "../Order/Order.h"
 
+int Profile::getTerminalWidth() {
+    struct winsize size;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
+    return size.ws_col;
+}
+void Profile::centeredText(const std::string &text) {
+    int terminalWidth = getTerminalWidth();
+
+    int textWidth = text.length();
+    int padding = (terminalWidth - textWidth) / 2;
+    // cout << "\033[1;31mbold red text\033[0m\n";
+    std::cout << std::setw(padding + textWidth)
+              << "\033[1;40m" + text + "\033[0m\n"
+              << std::endl;
+}
 void Profile::showProfilePage() {
     Order order;
     Menu menu;
-
-    std::cout << "\t\t\t\t --------- Hello!--------- \n\n";
-    std::cout << "\t\t\t\t  Welcome to Your Profile. \n\n\n";
+    Table profileTable, choiceTable;
+    system("clear");
+    centeredText("Hello!");
+    centeredText("Welcome to Your Profile.");
     int choice;
-    std::cout << "\t * Press 1 for Menu Screen " << std::endl;
-    std::cout << "\t * Press 2 for Ordering " << std::endl;
-    std::cout << "\t * Press 3 for Analytics" << std::endl;
-    std::cout << "\t * Press 4 to EXIT \n\n";
-    std::cout << "\t Enter your choice: ";
+    profileTable.add_row({"1. Menu", "2. Order", "3. Analytics", "4. Exit"});
+    profileTable[0]
+        .format()
+        .font_color(Color::yellow)
+        .font_align(FontAlign::center)
+        .font_style({FontStyle::bold})
+        .width(40);
+    std::cout << profileTable << std::endl;
+    choiceTable.add_row({"Enter Your Choice: "});
+    choiceTable[0]
+        .format()
+        .background_color(Color::green)
+        .font_align(FontAlign::center);
+    std::cout << choiceTable;
+    std::cout << "\t";
     std::cin >> choice;
     std::cout << std::endl;
-
     switch (choice) {
         case 1:
             menu.firstPage();
@@ -31,10 +56,9 @@ void Profile::showProfilePage() {
             analytics.firstPage();
             break;
         case 4:
-            std::cout << "\t\t\t Thank you! \n\n";
+            centeredText("Thank you!");
             break;
         default:
-            std::cout << "\x1B[2J\x1B[H";
-            std::cout << "\t\t\t Select from the options given above \n";
+            centeredText("Select from the options given above");
     }
 }

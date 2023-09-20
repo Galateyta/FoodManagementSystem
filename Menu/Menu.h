@@ -1,12 +1,15 @@
-#include <iostream>
-#include <string>
-#include <cstdlib>
-#include <unistd.h>
-#include <iomanip> 
 #include <sys/ioctl.h>
 #include <unistd.h>
 
+#include <cstdlib>
+#include <iomanip>
+#include <iostream>
+#include <string>
+#include <tabulate/table.hpp>
+
 #include "/usr/include/mysql/mysql.h"
+
+using namespace tabulate;
 
 class Menu {
    public:
@@ -22,8 +25,8 @@ class Menu {
     void deleteMenu(std::string Current_user_ID);
     void showMenu(std::string Current_user_ID);
     void firstPage();
-    void centeredText(const std::string &text ) ;
-    int getTerminalWidth( ) ;
-    void header() ; 
+    void centeredText(const std::string &text);
+    int getTerminalWidth();
+    void header();
     std::pair<MYSQL_RES *, int> fetchUser(std::string Current_user_ID);
 };

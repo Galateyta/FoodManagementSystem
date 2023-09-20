@@ -25,5 +25,7 @@ class Order {
     void takeOrder(std::string currentUserID, Order order);
     std::pair<MYSQL_RES *, int> fetchMenu(std::string currentUserID);
     MYSQL_ROW getDishByID(std::string currentUserID, std::string dishName);
+    void centeredText(const std::string &text);
+    int getTerminalWidth();
 };
 #endif

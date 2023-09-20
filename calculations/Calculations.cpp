@@ -2,9 +2,9 @@
 
 float calculateFrequencyOnOrder(bool post, std::string currentUserID) {
     char server[26] = "sql8.freesqldatabase.com";
-    char username[15] = "sql8646145";
-    char password[15] = "z9nFFL1Han";
-    char database[15] = "sql8646145";
+    char username[25] = "sql8646145";
+    char password[25] = "z9nFFL1Han";
+    char database[25] = "sql8646145";
 
     std::pair<float, float> totalWastedAndUsedOil =
         getTotalWastedAndUsedOil(currentUserID);
@@ -58,9 +58,9 @@ float calculateFrequencyOnOrder(bool post, std::string currentUserID) {
 
 float calculateCoefficientOnOrder(bool post, std::string currentUserID) {
     char server[26] = "sql8.freesqldatabase.com";
-    char username[15] = "sql8646145";
+    char username[15] = "sql8647023";
     char password[15] = "z9nFFL1Han";
-    char database[15] = "sql8646145";
+    char database[15] = "sql8647023";
 
     MYSQL *conn = mysql_init(NULL);
 

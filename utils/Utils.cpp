@@ -39,9 +39,9 @@ std::string timePointToString(
 
 void updateCurrentOilCount(std::string currentUserID, Order order) {
     char server[26] = "sql8.freesqldatabase.com";
-    char username[15] = "sql8646145";
-    char password[15] = "z9nFFL1Han";
-    char database[15] = "sql8646145";
+    char username[25] = "sql8646145";
+    char password[25] = "z9nFFL1Han";
+    char database[25] = "sql8646145";
 
     MYSQL *conn = mysql_init(NULL);
 
@@ -101,10 +101,9 @@ void updateCurrentOilCount(std::string currentUserID, Order order) {
 }
 std::pair<float, float> getTotalWastedAndUsedOil(std::string currentUserID) {
     char server[26] = "sql8.freesqldatabase.com";
-    char username[15] = "sql8646145";
-    char password[15] = "z9nFFL1Han";
-    char database[15] = "sql8646145";
-
+    char username[25] = "sql8646145";
+    char password[25] = "z9nFFL1Han";
+    char database[25] = "sql8646145";
     MYSQL *conn = mysql_init(NULL);
 
     if (mysql_real_connect(conn, server, username, password, database, 0,

@@ -6,6 +6,7 @@
 
 Order order;
 Profile profile;
+
 int Menu::getTerminalWidth() {
     struct winsize size;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
@@ -14,37 +15,36 @@ int Menu::getTerminalWidth() {
 
 void Menu::centeredText(const std::string &text) {
     int terminalWidth = getTerminalWidth();
+
     int textWidth = text.length();
     int padding = (terminalWidth - textWidth) / 2;
-
-    std::cout << std::setw(padding + textWidth) << text << std::endl;
+    std::cout << std::setw(padding + textWidth)
+              << "\033[1;40m" + text + "\033[0m\n"
+              << std::endl;
 }
 void Menu::header() {
-    system("clear");
     centeredText("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-    centeredText("\033[32m FOOD MANAGEMENT\n");
+    centeredText("FOOD MANAGEMENT");
 };
 
 Menu::Menu() {}
 
 std::pair<MYSQL_RES *, int> Menu::fetchUser(std::string currentUserID) {
     char server[26] = "sql8.freesqldatabase.com";
-    char username[15] = "sql8646145";
-    char password[15] = "z9nFFL1Han";
-    char database[15] = "sql8646145";
+    char username[25] = "sql8646145";
+    char password[25] = "z9nFFL1Han";
+    char database[25] = "sql8646145";
 
     MYSQL *conn = mysql_init(NULL);
 
     if (mysql_real_connect(conn, server, username, password, database, 0,
                            nullptr, 0) == nullptr) {
-        system("clear");
         centeredText("\033[31m Unable to connect with MySQL server");
         mysql_close(conn);
         return std::make_pair(nullptr, 1);
     }
 
     if (mysql_query(conn, "SELECT * FROM RESTAURANTS")) {
-        system("clear");
         centeredText("\033[31m Query execution error.");
         mysql_close(conn);
         return std::make_pair(nullptr, 1);
@@ -53,7 +53,6 @@ std::pair<MYSQL_RES *, int> Menu::fetchUser(std::string currentUserID) {
     MYSQL_RES *result = mysql_store_result(conn);
 
     if (result == nullptr) {
-        system("clear");
         centeredText("\033[31m Result fetching error.");
         mysql_close(conn);
         return std::make_pair(nullptr, 1);
@@ -63,13 +62,13 @@ std::pair<MYSQL_RES *, int> Menu::fetchUser(std::string currentUserID) {
 }
 
 void Menu::addMenu(std::string currentUserID) {
+    system("clear");
     char server[26] = "sql8.freesqldatabase.com";
-    char username[15] = "sql8646145";
-    char password[15] = "z9nFFL1Han";
-    char database[15] = "sql8646145";
+    char username[25] = "sql8646145";
+    char password[25] = "z9nFFL1Han";
+    char database[25] = "sql8646145";
 
     MYSQL *conn = mysql_init(NULL);
-
     if (mysql_real_connect(conn, server, username, password, database, 0,
                            nullptr, 0) == nullptr) {
         system("clear");
@@ -77,7 +76,6 @@ void Menu::addMenu(std::string currentUserID) {
         mysql_close(conn);
         return;
     }
-
     std::string Select_column_query = "SELECT ID FROM MENU";
     if (mysql_query(conn, Select_column_query.c_str())) {
         system("clear");
@@ -85,49 +83,91 @@ void Menu::addMenu(std::string currentUserID) {
         mysql_close(conn);
         return;
     }
-
     MYSQL_RES *Result = mysql_store_result(conn);
-
     if (Result == nullptr) {
         system("clear");
         centeredText("\033[31m Result fetching error.");
         mysql_close(conn);
         return;
     }
-
     std::string Dish_name;
     int Oil_count, Frying_level;
     int Is_menu_added = -1;
-    system("clear");
-    header();
-    centeredText("Now you need to enter in order");
-    centeredText("1. The name of the food");
-    centeredText("2. The amount of oil used in cooking that food");
-    centeredText("3. The frying level (there are 3 choices)");
-    centeredText("If you want to finish, just type 'NO'");
+    Table addMenuTableHeading;
+    Table addMenuTable;
+
+    addMenuTableHeading.add_row({"Please fill following details."});
+    addMenuTableHeading.format()
+        .background_color(Color::green)
+        .font_align(FontAlign::center);
+    std::cout << addMenuTableHeading << std::endl;
+
+    addMenuTable.add_row({"1. The name of Dish",
+                          "2. The amount of Oil used to cook the Dish",
+                          "3. The frying level (there are 4 choices)",
+                          "4. If you want to finish, just type 'NO'"});
+    addMenuTable[0]
+        .format()
+        .font_color(Color::yellow)
+        .font_align(FontAlign::center)
+        .font_style({FontStyle::bold})
+        .width(30);
+    std::cout << addMenuTable << std::endl;
+    addMenuTable.add_row({"Enter Your Choice: "});
+    addMenuTable[0]
+        .format()
+        .background_color(Color::green)
+        .font_align(FontAlign::center);
 
     while (true) {
         header();
-        centeredText("Enter the name of the food: ");
+        Table foodNameTable;
+        foodNameTable.add_row({"Enter the name of the food:"});
+        foodNameTable.format()
+            .background_color(Color::green)
+            .font_align(FontAlign::center);
+        std::cout << foodNameTable << "\t";
         std::cin.ignore();
         std::getline(std::cin, Dish_name);
+        std::cout << "\n";
+
         if (Dish_name == "no" || Dish_name == "No" || Dish_name == "nO" ||
             Dish_name == "NO") {
+            system("clear");
             ++Is_menu_added;
             break;
         }
-        header();
-        centeredText("Enter the oil count: ");
-        std::cin >> Oil_count;
-        while (true) {
-            header();
-            centeredText("Enter your choice");
-            centeredText("0. Zero level (0%)");
-            centeredText("1. First level (5%)");
-            centeredText("2. Second level (10%)");
-            centeredText("3. Third level (15%)");
 
+        while (true) {
+            Table oilCountTable;
+            oilCountTable.add_row({"Enter the oil count: "});
+            oilCountTable.format()
+                .background_color(Color::green)
+                .font_align(FontAlign::center);
+            std::cout << oilCountTable << "\t";
+            std::cin >> Oil_count;
+            std::cout << "\n";
+
+            Table fryingLevelTable;
+            fryingLevelTable.add_row({"Enter the oil count: "});
+            fryingLevelTable.format()
+                .background_color(Color::green)
+                .font_align(FontAlign::center);
+            std::cout << fryingLevelTable << std::endl;
+
+            Table levelsTable;
+            levelsTable.add_row({"1. Zero level (0%)", "2. First level (5%)",
+                                 "3. Second level (10%)",
+                                 "4. Third level (15%)"});
+            levelsTable[0]
+                .format()
+                .font_color(Color::yellow)
+                .font_align(FontAlign::center)
+                .font_style({FontStyle::bold})
+                .width(30);
+            std::cout << levelsTable << std::endl;
             std::cin >> Frying_level;
+
             if (Frying_level != 0 && Frying_level != 1 && Frying_level != 2 &&
                 Frying_level != 3) {
                 header();
@@ -137,43 +177,43 @@ void Menu::addMenu(std::string currentUserID) {
             }
             break;
         }
-
         std::string Insert_query =
             "INSERT INTO MENU(ID, DishName, OilCount, FryingLevel) VALUES ('" +
             currentUserID + "','" + Dish_name + "','" +
             std::to_string(Oil_count) + "','" + std::to_string(Frying_level) +
             "')";
-
         if (mysql_query(conn, Insert_query.c_str())) {
             mysql_close(conn);
             return;
         }
-        header();
+        system("clear");
         centeredText("This food has been added to your menu.");
         centeredText("If you want to finish, just type 'NO'");
     }
     mysql_close(conn);
     if (Is_menu_added != 0) {
+        system("clear");
         header();
         centeredText("Thank you, your menu has been added successfully!");
     } else {
         header();
+        system("clear");
         centeredText("You have not added a menu!");
     }
+    system("clear");
+
     firstPage();
 }
-
 void Menu::showMenu(std::string currentUserID) {
     char server[26] = "sql8.freesqldatabase.com";
-    char username[15] = "sql8646145";
-    char password[15] = "z9nFFL1Han";
-    char database[15] = "sql8646145";
+    char username[25] = "sql8646145";
+    char password[25] = "z9nFFL1Han";
+    char database[25] = "sql8646145";
 
     MYSQL *conn = mysql_init(NULL);
 
     if (mysql_real_connect(conn, server, username, password, database, 0,
                            nullptr, 0) == nullptr) {
-        system("clear");
         centeredText("\033[31m Unable to connect with MySQL server");
         mysql_close(conn);
         return;
@@ -183,7 +223,6 @@ void Menu::showMenu(std::string currentUserID) {
         "SELECT * FROM MENU WHERE ID = '" + currentUserID + "'";
 
     if (mysql_query(conn, selectRowQuery.c_str())) {
-        system("clear");
         centeredText("\033[31m Query execution error: " +
                      std::string(mysql_error(conn)));
         mysql_close(conn);
@@ -192,7 +231,6 @@ void Menu::showMenu(std::string currentUserID) {
 
     MYSQL_RES *result = mysql_store_result(conn);
     if (result == nullptr) {
-        system("clear");
         centeredText("\033[31m Result fetching error.");
         mysql_close(conn);
         return;
@@ -209,6 +247,7 @@ void Menu::showMenu(std::string currentUserID) {
         }
         std::cout << std::endl;
     }
+    firstPage();
 
     mysql_free_result(result);
     mysql_close(conn);
@@ -216,14 +255,13 @@ void Menu::showMenu(std::string currentUserID) {
 
 void Menu::deleteMenu(std::string currentUserID) {
     char server[26] = "sql8.freesqldatabase.com";
-    char username[15] = "sql8646145";
-    char password[15] = "z9nFFL1Han";
-    char database[15] = "sql8646145";
+    char username[25] = "sql8646145";
+    char password[25] = "z9nFFL1Han";
+    char database[25] = "sql8646145";
     MYSQL *conn = mysql_init(NULL);
 
     if (mysql_real_connect(conn, server, username, password, database, 0,
                            nullptr, 0) == nullptr) {
-        system("clear");
         centeredText("\033[31m Unable to connect with MySQL server");
         mysql_close(conn);
         return;
@@ -231,7 +269,6 @@ void Menu::deleteMenu(std::string currentUserID) {
 
     std::string Select_column_query = "SELECT ID FROM MENU";
     if (mysql_query(conn, Select_column_query.c_str())) {
-        system("clear");
         centeredText("\033[31m Query execution error.");
         mysql_close(conn);
         return;
@@ -240,7 +277,6 @@ void Menu::deleteMenu(std::string currentUserID) {
     MYSQL_RES *Result = mysql_store_result(conn);
 
     if (Result == nullptr) {
-        system("clear");
         centeredText("\033[31m Result fetching error.");
         mysql_close(conn);
         return;
@@ -254,7 +290,6 @@ void Menu::deleteMenu(std::string currentUserID) {
             std::string Delete_row_query =
                 "DELETE FROM MENU WHERE ID = '" + currentUserID + "'";
             if (mysql_query(conn, Delete_row_query.c_str())) {
-                system("clear");
                 centeredText("\033[31m Query execution error: " +
                              std::string(mysql_error(conn)));
                 mysql_close(conn);
@@ -266,7 +301,6 @@ void Menu::deleteMenu(std::string currentUserID) {
     mysql_close(conn);
 
     if (!Check_menu_ID) {
-        system("clear");
         centeredText("\033[31m Sorry, you didn't add a menu!");
         firstPage();
     } else {
@@ -277,26 +311,30 @@ void Menu::deleteMenu(std::string currentUserID) {
 }
 
 void Menu::firstPage() {
+    Table firstPageTable;
     std::string currentUserID = GlobalStates::currentUserID;
     int answer;
     Menu obj;
-    std::cout << "\t * Press 1 to Add Menu    " << std::endl;
-    std::cout << "\t * Press 2 to Edit Menu   " << std::endl;
-    std::cout << "\t * Press 3 to Show Menu   " << std::endl;
-    std::cout << "\t * Press 4 to Delete Menu " << std::endl;
-    std::cout << "\t * Press 5 to Go to Profile" << std::endl;
-    std::cout << "\t * Press 6 to EXIT \n\n";
     header();
-    centeredText(" * Press 1 to Add Menu");
-    centeredText(" * Press 2 to Edit Menu");
-    centeredText(" * Press 3 to Show Menu");
-    centeredText(" * Press 4 to Delete Menu");
-    centeredText(" * Press 5 to Take Order");
-    centeredText(" * Press 6 to EXIT");
 
-    std::cout << "\t Enter your choice: ";
-
+    firstPageTable.add_row({"1. Add Menu", "2. Edit Menu", "3. Show Menu",
+                            "4. Delete Menu", "5. Profile", "6. Exit"});
+    firstPageTable[0]
+        .format()
+        .font_color(Color::yellow)
+        .font_align(FontAlign::center)
+        .font_style({FontStyle::bold})
+        .width(30);
+    std::cout << firstPageTable << std::endl;
+    firstPageTable.add_row({"Enter Your Choice: "});
+    firstPageTable[0]
+        .format()
+        .background_color(Color::green)
+        .font_align(FontAlign::center);
+    std::cout << "\t";
     std::cin >> answer;
+    std::cout << std::endl;
+
     switch (answer) {
         case 1:
             obj.addMenu(currentUserID);
@@ -314,20 +352,20 @@ void Menu::firstPage() {
             profile.showProfilePage();
             break;
         case 6:
-            std::cout << "\t\t\t Thank you! \n\n";
+            centeredText("Thank You!");
             break;
         default:
             std::cout << "\033[2J\033[1;1H";
-            std::cout << "\t\t\t Select  from the options given above \n";
+            std::cout << "\t\t\t Select from the options given above \n";
             firstPage();
     }
 }
 
 void Menu::editMenu(std::string currentUserID) {
     char server[26] = "sql8.freesqldatabase.com";
-    char username[15] = "sql8646145";
-    char password[15] = "z9nFFL1Han";
-    char database[15] = "sql8646145";
+    char username[25] = "sql8646145";
+    char password[25] = "z9nFFL1Han";
+    char database[25] = "sql8646145";
     MYSQL *conn = mysql_init(NULL);
     if (mysql_real_connect(conn, server, username, password, database, 0,
                            nullptr, 0) == nullptr) {
@@ -550,6 +588,7 @@ void Menu::editMenu(std::string currentUserID) {
             }
         }
     }
+    firstPage();
 
     mysql_close(conn);
 }
