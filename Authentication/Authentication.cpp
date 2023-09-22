@@ -24,7 +24,11 @@ int Authentication::getTerminalWidth() {
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
     return size.ws_col;
 }
-
+void Authentication::space(int num) {
+    for (int i = 0; i <= num; i++) {
+        std::cout << " ";
+    }
+}
 void Authentication::centeredText(const std::string &text) {
     int terminalWidth = getTerminalWidth();
 
@@ -714,11 +718,6 @@ void Authentication::forgot() {
     }
 }
 
-void space(int num) {
-    for (int i = 0; i <= num; i++) {
-        std::cout << " ";
-    }
-}
 void Authentication::adminPage() {
     int choise = 0;
     char server[26] = "sql11.freesqldatabase.com";

@@ -10,6 +10,24 @@
 #include "../utils/Utils.h"
 #include "/usr/include/mysql/mysql.h"
 
+int Order::getTerminalWidth() {
+    struct winsize size;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
+    return size.ws_col;
+}
+
+void Order::centeredText(const std::string &text) {
+    int terminalWidth = getTerminalWidth();
+    int textWidth = text.length();
+    int padding = (terminalWidth - textWidth) / 2;
+
+    std::cout << std::setw(padding + textWidth) << text << std::endl;
+}
+void Order::header() {
+    system("clear");
+    centeredText("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+    centeredText("\033[32m FOOD MANAGEMENT\n");
+};
 Order::Order() {}
 
 Order::Order(const std::string &dishName,
@@ -23,21 +41,6 @@ Order::Order(const std::string &dishName,
       orderID(RestNameOrderID),
       fryingLvl(fryingLevel) {}
 
-int Order::getTerminalWidth() {
-    struct winsize size;
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
-    return size.ws_col;
-}
-void Order::centeredText(const std::string &text) {
-    int terminalWidth = getTerminalWidth();
-
-    int textWidth = text.length();
-    int padding = (terminalWidth - textWidth) / 2;
-    // cout << "\033[1;31mbold red text\033[0m\n";
-    std::cout << std::setw(padding + textWidth)
-              << "\033[1;40m" + text + "\033[0m\n"
-              << std::endl;
-}
 void Order::takeOrder(std::string currentUserID, Order order) {
     char server[26] = "sql11.freesqldatabase.com";
     char username[25] = "sql11647725";
@@ -47,7 +50,7 @@ void Order::takeOrder(std::string currentUserID, Order order) {
     MYSQL *conn = mysql_init(NULL);
     if (mysql_real_connect(conn, server, username, password, database, 0, NULL,
                            0) == NULL) {
-        printf("Unable to connect with MySQL server\n");
+        centeredText("Unable to connect with MySQL server");
         mysql_close(conn);
     }
     std::string insertQuery =
@@ -171,13 +174,13 @@ std::pair<MYSQL_RES *, int> Order::fetchMenu(std::string currentUserID) {
     // Connecting to database
     if (mysql_real_connect(conn, server, username, password, database, 0, NULL,
                            0) == NULL) {
-        printf("Unable to connect with MySQL server\n");
+        centeredText("Unable to connect with MySQL server\n");
         return std::make_pair(nullptr, 1);
     }
 
     // Connecting to table
     if (mysql_query(conn, "SELECT * FROM MENU")) {
-        std::cerr << "Query execution error." << std::endl;
+        centeredText("Query execution error.");
         mysql_close(conn);
         return std::make_pair(nullptr, 1);
     }
@@ -185,7 +188,7 @@ std::pair<MYSQL_RES *, int> Order::fetchMenu(std::string currentUserID) {
     // Getting the result
     MYSQL_RES *result = mysql_store_result(conn);
     if (result == nullptr) {
-        std::cerr << "Result fetching error." << std::endl;
+        centeredText("Result fetching error.");
         mysql_close(conn);
         return std::make_pair(nullptr, 1);
     }
@@ -197,7 +200,8 @@ MYSQL_ROW Order::getDishByID(std::string currentUserID, std::string dishName) {
     std::pair<MYSQL_RES *, int> result = fetchMenu(currentUserID);
 
     if (result.second != 0) {
-        std::cout << "Error while fetching menu." << std::endl;
+        header();
+        centeredText("Error while fetching menu.");
     }
 
     MYSQL_RES *menuResult = result.first;

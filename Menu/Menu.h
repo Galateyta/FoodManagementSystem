@@ -1,5 +1,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
+#include <cstring>
+
 
 #include <cstdlib>
 #include <iomanip>

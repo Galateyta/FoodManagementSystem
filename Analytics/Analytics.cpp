@@ -47,7 +47,8 @@ void Analytics::showAnalytics() {
     firstPage();
 }
 
-void Analytics::firstPage() {
+void Analytics::firstPage()
+{
     Profile profile;
     Table firstPage;
     centeredText("--------- Welcome to Analytics Page ---------");

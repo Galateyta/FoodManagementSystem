@@ -5,7 +5,7 @@
 
 int main() {
     Authentication auth;
-    auth.authPage();
+    auth.loading();
 
     return 0;
 }

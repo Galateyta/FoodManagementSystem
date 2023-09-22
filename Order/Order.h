@@ -3,6 +3,13 @@
 
 #include <chrono>
 #include <string>
+#include <cstdlib>
+#include <unistd.h>
+#include <iomanip> 
+#include <sys/ioctl.h>
+#include <unistd.h>
+#include <cstring>
+
 
 #include "/usr/include/mysql/mysql.h"
 
@@ -25,6 +32,7 @@ class Order {
     void takeOrder(std::string currentUserID, Order order);
     std::pair<MYSQL_RES *, int> fetchMenu(std::string currentUserID);
     MYSQL_ROW getDishByID(std::string currentUserID, std::string dishName);
+    void header();
     void centeredText(const std::string &text);
     int getTerminalWidth();
 };

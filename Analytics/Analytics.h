@@ -3,6 +3,13 @@
 
 #include "/usr/include/mysql/mysql.h"
 
+#include <cstdlib>
+#include <unistd.h>
+#include <iomanip> 
+#include <sys/ioctl.h>
+#include <unistd.h>
+#include <cstring>
+
 using namespace tabulate;
 class Analytics {
    public:

@@ -20,4 +20,5 @@ class Authentication {
     int getTerminalWidth();
     void adminPage();
     void centeredTextNoEndl(const std::string& text);
+    void space(int num);
 };
