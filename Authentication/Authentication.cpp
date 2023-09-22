@@ -171,10 +171,10 @@ void Authentication::registration() {
     std::cin >> username;
     std::cout << "\n" << std::endl;
 
-    char server[26] = "sql8.freesqldatabase.com";
-    char serverUsername[25] = "sql8646145";
-    char serverPassword[25] = "z9nFFL1Han";
-    char database[25] = "sql8646145";
+    char server[26] = "sql11.freesqldatabase.com";
+    char serverUsername[25] = "sql11647725";
+    char serverPassword[25] = "zvyL1P8QXx";
+    char database[25] = "sql11647725";
 
     MYSQL *conn = mysql_init(NULL);
 
@@ -334,10 +334,10 @@ void Authentication::login() {
     int count;
     std::string UserName, Password;
 
-    char server[26] = "sql8.freesqldatabase.com";
-    char serverUsername[25] = "sql8647023";
-    char serverPassword[25] = "NsgNEF47dB";
-    char database[25] = "sql8647023";
+    char server[26] = "sql11.freesqldatabase.com";
+    char serverUsername[25] = "sql11647725";
+    char serverPassword[25] = "zvyL1P8QXx";
+    char database[25] = "sql11647725";
 
     MYSQL *conn = mysql_init(NULL);
 
@@ -467,10 +467,10 @@ void Authentication::forgot() {
 
     switch (choice) {
         case 1: {
-            char server[26] = "sql8.freesqldatabase.com";
-            char username[25] = "sql8646145";
-            char password[25] = "z9nFFL1Han";
-            char database[25] = "sql8646145";
+            char server[26] = "sql11.freesqldatabase.com";
+            char username[25] = "sql11647725";
+            char password[25] = "zvyL1P8QXx";
+            char database[25] = "sql11647725";
             std::string chooseUserName, recipient, choosePassword;
             bool foundUsername = false;
             std::cout << "\x1B[2J\x1B[H";
@@ -721,10 +721,10 @@ void space(int num) {
 }
 void Authentication::adminPage() {
     int choise = 0;
-    char server[26] = "sql8.freesqldatabase.com";
-    char serverUsername[25] = "sql8646145";
-    char serverPassword[25] = "z9nFFL1Han";
-    char database[25] = "sql8646145";
+    char server[26] = "sql11.freesqldatabase.com";
+    char serverUsername[25] = "sql11647725";
+    char serverPassword[25] = "zvyL1P8QXx";
+    char database[25] = "sql11647725";
     std::string selectColumnsQuery;
 
     MYSQL *conn = mysql_init(NULL);

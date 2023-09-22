@@ -39,10 +39,10 @@ void Order::centeredText(const std::string &text) {
               << std::endl;
 }
 void Order::takeOrder(std::string currentUserID, Order order) {
-    char server[26] = "sql8.freesqldatabase.com";
-    char username[25] = "sql8646145";
-    char password[25] = "z9nFFL1Han";
-    char database[25] = "sql8646145";
+    char server[26] = "sql11.freesqldatabase.com";
+    char username[25] = "sql11647725";
+    char password[25] = "zvyL1P8QXx";
+    char database[25] = "sql11647725";
 
     MYSQL *conn = mysql_init(NULL);
     if (mysql_real_connect(conn, server, username, password, database, 0, NULL,
@@ -127,7 +127,8 @@ void Order::fillOrderData(std::string currentUserID) {
     std::cout << choiceTable;
     std::cout << "\t";
     std::cout << "_ ";
-    std::cin >> dishName;
+    std::cin.ignore();
+    std::getline(std::cin, dishName);
 
     countTable.add_row({"Enter Dish Count "});
     countTable[0]
@@ -161,10 +162,11 @@ void Order::fillOrderData(std::string currentUserID) {
 }
 
 std::pair<MYSQL_RES *, int> Order::fetchMenu(std::string currentUserID) {
-    char server[26] = "sql8.freesqldatabase.com";
-    char username[25] = "sql8646145";
-    char password[25] = "z9nFFL1Han";
-    char database[25] = "sql8646145";
+    char server[26] = "sql11.freesqldatabase.com";
+    char username[25] = "sql11647725";
+    char password[25] = "zvyL1P8QXx";
+    char database[25] = "sql11647725";
+
     MYSQL *conn = mysql_init(NULL);
     // Connecting to database
     if (mysql_real_connect(conn, server, username, password, database, 0, NULL,

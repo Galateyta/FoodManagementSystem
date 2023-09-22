@@ -30,10 +30,10 @@ void Menu::header() {
 Menu::Menu() {}
 
 std::pair<MYSQL_RES *, int> Menu::fetchUser(std::string currentUserID) {
-    char server[26] = "sql8.freesqldatabase.com";
-    char username[25] = "sql8646145";
-    char password[25] = "z9nFFL1Han";
-    char database[25] = "sql8646145";
+    char server[26] = "sql11.freesqldatabase.com";
+    char username[25] = "sql11647725";
+    char password[25] = "zvyL1P8QXx";
+    char database[25] = "sql11647725";
 
     MYSQL *conn = mysql_init(NULL);
 
@@ -63,29 +63,26 @@ std::pair<MYSQL_RES *, int> Menu::fetchUser(std::string currentUserID) {
 
 void Menu::addMenu(std::string currentUserID) {
     system("clear");
-    char server[26] = "sql8.freesqldatabase.com";
-    char username[25] = "sql8646145";
-    char password[25] = "z9nFFL1Han";
-    char database[25] = "sql8646145";
+    char server[26] = "sql11.freesqldatabase.com";
+    char username[25] = "sql11647725";
+    char password[25] = "zvyL1P8QXx";
+    char database[25] = "sql11647725";
 
     MYSQL *conn = mysql_init(NULL);
     if (mysql_real_connect(conn, server, username, password, database, 0,
                            nullptr, 0) == nullptr) {
-        system("clear");
         centeredText("\033[31m Unable to connect with MySQL server");
         mysql_close(conn);
         return;
     }
     std::string Select_column_query = "SELECT ID FROM MENU";
     if (mysql_query(conn, Select_column_query.c_str())) {
-        system("clear");
         centeredText("\033[31m Query execution error.");
         mysql_close(conn);
         return;
     }
     MYSQL_RES *Result = mysql_store_result(conn);
     if (Result == nullptr) {
-        system("clear");
         centeredText("\033[31m Result fetching error.");
         mysql_close(conn);
         return;
@@ -168,7 +165,7 @@ void Menu::addMenu(std::string currentUserID) {
             std::cout << levelsTable << std::endl;
             std::cin >> Frying_level;
 
-            if (Frying_level != 0 && Frying_level != 1 && Frying_level != 2 &&
+            if (Frying_level != 4 && Frying_level != 1 && Frying_level != 2 &&
                 Frying_level != 3) {
                 header();
                 centeredText("\033[33m Please choose one of the 3 options!!!");
@@ -205,10 +202,10 @@ void Menu::addMenu(std::string currentUserID) {
     firstPage();
 }
 void Menu::showMenu(std::string currentUserID) {
-    char server[26] = "sql8.freesqldatabase.com";
-    char username[25] = "sql8646145";
-    char password[25] = "z9nFFL1Han";
-    char database[25] = "sql8646145";
+    char server[26] = "sql11.freesqldatabase.com";
+    char username[25] = "sql11647725";
+    char password[25] = "zvyL1P8QXx";
+    char database[25] = "sql11647725";
 
     MYSQL *conn = mysql_init(NULL);
 
@@ -254,10 +251,11 @@ void Menu::showMenu(std::string currentUserID) {
 }
 
 void Menu::deleteMenu(std::string currentUserID) {
-    char server[26] = "sql8.freesqldatabase.com";
-    char username[25] = "sql8646145";
-    char password[25] = "z9nFFL1Han";
-    char database[25] = "sql8646145";
+    char server[26] = "sql11.freesqldatabase.com";
+    char username[25] = "sql11647725";
+    char password[25] = "zvyL1P8QXx";
+    char database[25] = "sql11647725";
+
     MYSQL *conn = mysql_init(NULL);
 
     if (mysql_real_connect(conn, server, username, password, database, 0,
@@ -362,10 +360,11 @@ void Menu::firstPage() {
 }
 
 void Menu::editMenu(std::string currentUserID) {
-    char server[26] = "sql8.freesqldatabase.com";
-    char username[25] = "sql8646145";
-    char password[25] = "z9nFFL1Han";
-    char database[25] = "sql8646145";
+    char server[26] = "sql11.freesqldatabase.com";
+    char username[25] = "sql11647725";
+    char password[25] = "zvyL1P8QXx";
+    char database[25] = "sql11647725";
+
     MYSQL *conn = mysql_init(NULL);
     if (mysql_real_connect(conn, server, username, password, database, 0,
                            nullptr, 0) == nullptr) {
